@@ -11,7 +11,7 @@ class App(tk.Tk):
         super().__init__()
 
         self.title('Wifipy')
-        self.geometry('600x400+50+50')
+        self.geometry('600x400')
 
         model = Interface()
 
@@ -21,7 +21,6 @@ class App(tk.Tk):
         controller = AppController(model, view)
 
         view.set_controller(controller)
-
 
 
 if __name__ == '__main__':
