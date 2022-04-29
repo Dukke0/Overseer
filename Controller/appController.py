@@ -1,5 +1,6 @@
 #from View.AppView import AppView
 from Model.interface import Interface
+from View.AppView import AppView
 from View.ScanView import ScanView
 
 class AppController:
@@ -8,7 +9,7 @@ class AppController:
         self.app = app
         self.interface = Interface()
         self.view = None
-        self.change_view(ScanView) # Welcome page
+        self.change_view(AppView) # Welcome page
 
     def change_view(self, viewClass):
         if self.view != None:
@@ -20,6 +21,14 @@ class AppController:
 
     def get_list_interfaces(self):
         return self.interface.get_list_interfaces()
+
+    def get_networks(self):
+        try:
+            #return self.interface.scan_networks()
+            return ["A", "B", "C"]
+        except Exception as ex:
+            self.view.show_error(ex)
+    
 
     def selected_interface(self, name):
         self.interface.init_monitor()

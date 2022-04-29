@@ -1,6 +1,5 @@
 
 import tkinter as tk
-from Model.interface import Interface
 from Controller.appController import AppController
 
 class App(tk.Tk):

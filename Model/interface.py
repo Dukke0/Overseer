@@ -8,6 +8,10 @@ class Interface():
         self.max_retries = 5
         self.scan_time = 20
 
+    def scan_networks(selfs):
+        #raise NotImplementedError('Not implemented :)')
+        pass
+    
     def init_monitor(self):
         #raise NotImplementedError
         pass

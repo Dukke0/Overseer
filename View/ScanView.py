@@ -1,9 +1,9 @@
-from tkinter import ttk
+from tkinter import StringVar, ttk
 import tkinter as tk
 from tkinter.messagebox import showinfo
-from View import View
+from View.View import AbstractView
 
-class ScanView(ttk.Frame):
+class ScanView(AbstractView):
 
     def __init__(self, parent): 
         super().__init__(parent)
@@ -12,17 +12,21 @@ class ScanView(ttk.Frame):
         self.label.grid(row=1, column=0)
 
         self.scan_button = ttk.Button(self, text="Scan networks")
-        self.scan_button.bind('<<ListboxSelect>>', self.scan_button_clicked)
+        self.scan_button.bind('<Button-1>', self.scan_button_clicked)
         self.scan_button.grid(row=2, column=0)
 
-        self.networks_listbox = tk.Listbox(self, height=5, selectmode='browse')
+        self.list_networks = StringVar()
+        self.networks_listbox = tk.Listbox(self, listvariable=self.list_networks,
+                                            height=10, width=50, selectmode='browse')
+
         self.networks_listbox.grid(row=3, column=0)
 
         self.controller = None
-    
-    def set_controller(self, controller):
-        self.controller = controller
 
     # -- EVENTS ---
     def scan_button_clicked(self, event):
-        print('Im clicked')
+        networks = self.controller.get_networks()
+        self.list_networks.set(networks)
+
+    def show_error(self, ex):
+        showinfo(title='Error', message=str(ex))
