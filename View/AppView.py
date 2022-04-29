@@ -1,12 +1,13 @@
 from tkinter import ttk
 import tkinter as tk
 from tkinter.messagebox import showinfo
+from View import View
 
 class AppView(ttk.Frame):
 
     def __init__(self, parent): 
         super().__init__(parent)
-
+        
         self.label = ttk.Label(self, text='Welcome to Wifipy')
         self.label.grid(row=1, column=0)
 
@@ -17,7 +18,6 @@ class AppView(ttk.Frame):
         self.startButton = ttk.Button(self, text="Continue")
         self.startButton.bind('<Button-1>', self.nextButton_clicked)
         self.startButton.grid(row=3, column=0)
-
 
         self.controller = None
 
@@ -31,5 +31,8 @@ class AppView(ttk.Frame):
     def nextButton_clicked(self, event):
         if self.combobox.get() == "":
             showinfo(title='Error', message='Please select an interface')
-        else:
-            print(self.combobox.get())
+
+        self.controller.selected_interface(self.combobox.get())
+
+    def show_error(self):
+        pass

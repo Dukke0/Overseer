@@ -1,6 +1,5 @@
 
 import tkinter as tk
-from View.AppView import AppView
 from Model.interface import Interface
 from Controller.appController import AppController
 
@@ -13,15 +12,7 @@ class App(tk.Tk):
         self.title('Wifipy')
         self.geometry('600x400')
 
-        model = Interface()
-
-        view = AppView(self)
-        view.grid(row=0, column=0, padx=100, pady=100)
-
-        controller = AppController(model, view)
-
-        view.set_controller(controller)
-
+        AppController(self)
 
 if __name__ == '__main__':
     app = App()

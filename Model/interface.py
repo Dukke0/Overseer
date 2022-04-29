@@ -5,10 +5,12 @@ import time
 class Interface():
 
     def __init__(self):
-
-        self.monitor = ""
         self.max_retries = 5
         self.scan_time = 20
+
+    def init_monitor(self):
+        #raise NotImplementedError
+        pass
 
     def get_list_interfaces(self):
         list_ifs = sb.run([r"""ip -o link | grep ether | awk '{ print $2" : "$17 }'"""],
