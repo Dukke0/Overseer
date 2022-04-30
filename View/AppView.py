@@ -1,6 +1,6 @@
 from tkinter import ttk
 import tkinter as tk
-from tkinter.messagebox import showinfo
+from tkinter.messagebox import showerror, showinfo
 from View.View import AbstractView
 
 class AppView(AbstractView):
@@ -28,9 +28,12 @@ class AppView(AbstractView):
 
     def nextButton_clicked(self, event):
         if self.combobox.get() == "":
-            showinfo(title='Error', message='Please select an interface')
+            showerror(title='Error', message='Please select an interface')
         else:
-            self.controller.selected_interface(self.combobox.get())
+            info = self.combobox.get()
+            if info:
+                ifs_name = info[:info.find(':')]
+                self.controller.selected_interface(ifs_name)
 
     def show_error(self, ex):
-        showinfo(title='Error', message=str(ex))
+        showerror(title='Error', message=str(ex))
