@@ -12,7 +12,7 @@ class AppController:
         self.view = None
 
         #utl.temp_folder() # Create temp folder
-        self.change_view(AppView) # Welcome page
+        self.change_view(ScanView) # Welcome page
 
 
     def change_view(self, viewClass):
@@ -39,14 +39,12 @@ class AppController:
         Scans and returns a list of networks
         :return: list of networks
         '''
-        '''
+
         try:
-            self.interface.scan_networks()
+            #self.interface.scan_networks()
             return self.interface.get_networks()
         except Exception as ex:
             self.view.show_error(ex)
-        '''
-        raise NotImplementedError()
     
     def selected_interface(self, name):
         '''

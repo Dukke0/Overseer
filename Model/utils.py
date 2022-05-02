@@ -15,10 +15,18 @@ def parse_networks_file(filename):
     '''
     df = pd.read_csv(filename)
     df.dropna(subset=[' ID-length'],inplace=True)
-    df = df[[' ESSID', 'BSSID',' channel', ' Privacy', ' Cipher', ' Authentication']].copy()
-    print(df)
-    print(df.to_dict())
-    return ['A','B','C']
+    fields = [' ESSID', 'BSSID',' channel', ' Privacy', ' Cipher', ' Authentication']
+    df = df[fields].copy()
+    dic = df.to_dict()
+
+    #TODO is not efficient
+    detected_networks = list()
+    for i in range(len(df)):
+        network = list()
+        for f in fields:
+            network.append(dic[f][i])
+        detected_networks.append(network)
+    return detected_networks
 
 def set_temp(name):
     global folder_name

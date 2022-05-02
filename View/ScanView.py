@@ -9,38 +9,55 @@ class ScanView(AbstractView):
 
     def __init__(self, parent): 
         super().__init__(parent)
-
-        #SIDE BUTTONS
+        self.tv = None
+        # SIDE BUTTONS
         self.start_test_btn = ttk.Button(self, text="Start Testing", state=DISABLED)
         self.start_test_btn.grid(row=2, column=0)
 
         self.config_test_btn = ttk.Button(self, text="Test Options", state=DISABLED)
         self.config_test_btn.grid(row=3, column=0)
 
-        #SCAN BUTTON
+        # SCAN BUTTON
         self.scan_btn = ttk.Button(self, text="Scan networks")
         self.scan_btn.bind('<Button-1>', self.scan_btn_clicked)
-        self.scan_btn.grid(row=2, column=1)
+        self.scan_btn.grid(row=2, column=2)
         
-        # NETORK LIST WITH SCROLLBAR:
-        self.list_networks = StringVar()
-        self.networks_listbox = tk.Listbox(self, listvariable=self.list_networks,
-                                            height=10, width=50, selectmode='browse')
-        self.networks_listbox.bind('<<ListboxSelect>>', self.net_list_selected)
-        self.networks_listbox.grid(row=4, column=1)
+        # NETWORK LIST WITH SCROLLBAR:
+        self.tv = self.create_treeview(0,0)
+        self.tv.bind('<<TreeviewSelect>>', self.net_list_selected)
 
-        scrollbar = ttk.Scrollbar(self, orient=tk.VERTICAL)
-        scrollbar.config(command=self.networks_listbox.yview)
-        scrollbar.grid(row=4, column=2, sticky="NS")
-
-        self.networks_listbox.config(yscrollcommand=scrollbar.set)
-
-        #PROGRESS BAR
+        # PROGRESS BAR
         self.scan_progress = ttk.Progressbar(self, orient=tk.HORIZONTAL,
                                             length=200, mode='indeterminate')
 
+
+        
         self.controller = None
 
+    
+    # -- WIDGET CREATION ---
+
+    def create_treeview(self, c, r):
+        columns = (' ESSID', 'BSSID',' channel', ' Privacy', ' Cipher', ' Authentication')
+        tv = ttk.Treeview(self, columns=columns, 
+                            show='headings', height=5, selectmode='browse')
+        tv.grid(row=0, column=0)
+
+        vsb = ttk.Scrollbar(orient="vertical", command=tv.yview)
+        hsb = ttk.Scrollbar(orient="horizontal", command=tv.xview)
+
+        tv.configure(yscrollcommand=vsb.set, xscrollcommand=hsb.set)
+
+        tv.grid(column=c, row=r, sticky='nsew', in_=self)
+        vsb.grid(column=c+1, row=0, sticky='ns', in_=self)
+        hsb.grid(column=0, row=r+1, sticky='ew', in_=self)
+
+        for i, col in enumerate(columns):
+            tv.column(column=i, width=100)
+            tv.heading(col, text=str(col),
+                command=lambda c=col: self.sortby(c, 0))
+        
+        return tv
 
     # -- EVENTS ---
 
@@ -65,6 +82,7 @@ class ScanView(AbstractView):
         #self.scan_progress.start(7)
 
         networks = self.controller.get_networks()
+        print(networks)
         self.list_networks.set(networks)
 
         #self.after(self.controller.get_scan_time()*1000, lambda: self.hide_stop_progress())
@@ -77,3 +95,19 @@ class ScanView(AbstractView):
 
     def show_error(self, ex):
         showerror(title='Error', message=str(ex))
+
+    def sortby(self,col, descending):
+        """sort tree contents when a column header is clicked on"""
+        # grab values to sort
+        data = [(self.tv.set(child, col), child) \
+            for child in self.tv.get_children('')]
+        
+        # if the data to be sorted is numeric change to float
+        #data =  change_numeric(data)
+        # now sort the data in place
+        data.sort(reverse=descending)
+        for ix, item in enumerate(data):
+            self.tv.move(item[1], '', ix)
+        # switch the heading so it will sort in the opposite direction
+        self.tv.heading(col, command=lambda col=col: self.sortby(col, \
+            int(not descending)))

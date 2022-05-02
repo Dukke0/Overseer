@@ -19,7 +19,8 @@ class Interface():
         '''
         Scans the signals around using Aircack tool.
         '''
-   
+        utl.temp_folder()
+
         cmd = ['sudo',
             'airodump-ng', self.monitor,
             '--wps',
@@ -30,7 +31,7 @@ class Interface():
         process.terminate()
      
     def get_networks(self):
-        return utl.parse_networks_file(utl.wifi_file)
+        return utl.parse_networks_file(utl.wifi_file + '-01.csv')
 
     def set_interface(self, name):
         self.intf = name

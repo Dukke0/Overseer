@@ -1,5 +1,6 @@
 
 import tkinter as tk
+from View.MultiColumn import MultiColumnListbox
 from Controller.appController import AppController
 
 class App(tk.Tk):
