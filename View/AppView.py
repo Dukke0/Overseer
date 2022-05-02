@@ -9,7 +9,7 @@ class AppView(AbstractView):
         super().__init__(parent)
         
         self.label = ttk.Label(self, text='Welcome to Wifipy')
-        self.label.grid(row=0, column=0)
+        self.label.grid(row=2, column=1)
 
         self.combobox = ttk.Combobox(self)
         self.combobox.bind('<Button-1>', self.interface_changed)
@@ -17,7 +17,7 @@ class AppView(AbstractView):
 
         self.startButton = ttk.Button(self, text="Continue")
         self.startButton.bind('<Button-1>', self.nextButton_clicked)
-        self.startButton.grid(row=2, column=0)
+        self.startButton.grid(row=3, column=0)
 
         self.controller = None
 

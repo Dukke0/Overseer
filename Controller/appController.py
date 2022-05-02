@@ -60,3 +60,5 @@ class AppController:
         except Exception as ex:
             self.view.show_error(ex)
         
+    def get_scan_time(self):
+        return self.interface.get_scan_time()

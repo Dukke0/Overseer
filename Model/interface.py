@@ -1,35 +1,40 @@
 import subprocess as sb
 from asyncio.subprocess import PIPE
 import time
-from Model.utils import wifi_file, parse_networks_file
+
+import Model.utils as utl
 
 class Interface():
 
     def __init__(self):
         self.max_retries = 5
-        self.scan_time = 20
+        self.__scan_time = 20
         self.intf = ""
         self.monitor = ""
+    
+    def get_scan_time(self):
+        return self.__scan_time
 
     def scan_networks(self):
         '''
         Scans the signals around using Aircack tool.
         '''
+   
         cmd = ['sudo',
             'airodump-ng', self.monitor,
             '--wps',
-            '--write', wifi_file]
+            '--write', utl.wifi_file]
         
         process = sb.Popen(cmd, stdout=PIPE)
-        time.sleep(self.scan_time)
+        time.sleep(self.__scan_time)
         process.terminate()
      
     def get_networks(self):
-        return parse_networks_file(wifi_file)
+        return utl.parse_networks_file(utl.wifi_file)
 
     def set_interface(self, name):
         self.intf = name
-    
+
     def init_monitor(self):
         sb.run(["sudo airmon-ng start %s" % self.intf], capture_output=True, shell=True)
         monitor_name = sb.run(["iwconfig | grep mon"], capture_output=True, text=True, shell=True)
