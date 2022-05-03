@@ -4,11 +4,16 @@ from tkinter.messagebox import showerror
 from View.View import AbstractView
 from View.TestOptions import TestOptions
 import time
+import tkinter.font as tkFont
+
 
 class ScanView(AbstractView):
 
     def __init__(self, parent): 
         super().__init__(parent)
+        self.parent = parent
+        parent.protocol("WM_DELETE_WINDOW", self.on_closing)
+
         self.tv = None
         # SIDE BUTTONS
         self.start_test_btn = ttk.Button(self, text="Start Testing", state=DISABLED)
@@ -38,9 +43,9 @@ class ScanView(AbstractView):
     # -- WIDGET CREATION ---
 
     def create_treeview(self, c, r):
-        columns = (' ESSID', 'BSSID',' channel', ' Privacy', ' Cipher', ' Authentication')
-        tv = ttk.Treeview(self, columns=columns, 
-                            show='headings', height=5, selectmode='browse')
+        self.columns = (' ESSID', 'BSSID',' channel', ' Privacy', ' Cipher', ' Authentication')
+        tv = ttk.Treeview(self, columns=self.columns, 
+                            show='headings', height=10, selectmode='browse')
         tv.grid(row=0, column=0)
 
         vsb = ttk.Scrollbar(orient="vertical", command=tv.yview)
@@ -52,7 +57,7 @@ class ScanView(AbstractView):
         vsb.grid(column=c+1, row=0, sticky='ns', in_=self)
         hsb.grid(column=0, row=r+1, sticky='ew', in_=self)
 
-        for i, col in enumerate(columns):
+        for i, col in enumerate(self.columns):
             tv.column(column=i, width=100)
             tv.heading(col, text=str(col),
                 command=lambda c=col: self.sortby(c, 0))
@@ -78,15 +83,15 @@ class ScanView(AbstractView):
 
     def scan_btn_clicked(self, event):
 
-        #self.scan_progress.grid(row=4,column=1)
-        #self.scan_progress.start(7)
-
         networks = self.controller.get_networks()
-        print(networks)
-        self.list_networks.set(networks)
-
-        #self.after(self.controller.get_scan_time()*1000, lambda: self.hide_stop_progress())
-    
+        for n in networks:
+            parsed_net = ['-' if not i.strip() else i for i in n]
+            self.tv.insert('', tk.END, values=tuple(parsed_net))
+            for ix, val in enumerate(tuple(parsed_net)):
+                col_w = tkFont.Font().measure(val)
+                if self.tv.column(self.columns[ix],width=None)<col_w:
+                    self.tv.column(self.columns[ix], width=col_w)
+            
     # -- FUNCTIONS ---
 
     def hide_stop_progress(self):

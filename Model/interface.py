@@ -1,6 +1,7 @@
 import subprocess as sb
 from asyncio.subprocess import PIPE
 import time
+from Controller.appException import AppException
 
 import Model.utils as utl
 
@@ -36,12 +37,16 @@ class Interface():
     def set_interface(self, name):
         self.intf = name
 
+    def clean_exit(self):
+        utl.delete_temp()
+        sb.run(["sudo airmon-ng stop %s" % self.monitor], shell=True)
+
     def init_monitor(self):
         sb.run(["sudo airmon-ng start %s" % self.intf], capture_output=True, shell=True)
         monitor_name = sb.run(["iwconfig | grep mon"], capture_output=True, text=True, shell=True)
         self.monitor= monitor_name.stdout.split(" ")[0]
         if self.monitor == "":
-            raise Exception("Could not enable monitor mode, use a card that allows monitor mode")
+            raise AppException("Could not enable monitor mode, use a card that allows it")
 
     def get_list_interfaces(self):
         list_ifs = sb.run([r"""ip -o link | grep ether | awk '{ print $2" : "$17 }'"""],

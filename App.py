@@ -10,7 +10,7 @@ class App(tk.Tk):
         super().__init__()
 
         self.title('Wifipy')
-        self.geometry('600x400')
+        self.geometry('800x600')
 
         AppController(self)
 

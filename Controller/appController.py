@@ -1,8 +1,10 @@
 #from View.AppView import AppView
+from Controller.appException import AppException
 from Model.interface import Interface
 from View.AppView import AppView
 from View.ScanView import ScanView
 import Model.utils as utl
+import logging
 
 class AppController:
 
@@ -12,7 +14,7 @@ class AppController:
         self.view = None
 
         #utl.temp_folder() # Create temp folder
-        self.change_view(ScanView) # Welcome page
+        self.change_view(AppView) # Welcome page
 
 
     def change_view(self, viewClass):
@@ -41,10 +43,13 @@ class AppController:
         '''
 
         try:
-            #self.interface.scan_networks()
+            self.interface.scan_networks()
             return self.interface.get_networks()
-        except Exception as ex:
+        except AppException as ex:
             self.view.show_error(ex)
+        except Exception as e:
+            print(e)
+            self.clean_close
     
     def selected_interface(self, name):
         '''
@@ -55,8 +60,20 @@ class AppController:
             self.interface.set_interface(name)
             self.interface.init_monitor()
             self.change_view(ScanView) #Change view to next page
-        except Exception as ex:
+        except AppException as ex:
             self.view.show_error(ex)
+        except Exception as e:
+            print(e)
+            self.clean_close()
+            
         
     def get_scan_time(self):
         return self.interface.get_scan_time()
+
+    def clean_close(self):
+        try:
+            self.interface.clean_exit()
+            self.app.destroy()
+        except Exception as e:
+            print(e)
+            self.app.destroy()
