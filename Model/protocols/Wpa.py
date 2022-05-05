@@ -1,9 +1,10 @@
 from Model.protocols.Protocol import AbstractProtocol
-from Model.DeauthAttack import DeauthAttack
+from Model.Attacks.DeauthAttack import DeauthAttack
 
 class WpaProtocol(AbstractProtocol):
-
-    attacks = []
+    #class attribute
+    __protocol_attacks = (DeauthAttack)
 
     def __init__(self):
         super().__init__()
+    

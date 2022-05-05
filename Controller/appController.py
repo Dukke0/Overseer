@@ -1,5 +1,6 @@
 #from View.AppView import AppView
 from Controller.appException import AppException
+from Model.Target import Target
 from Model.interface import Interface
 from View.AppView import AppView
 from View.ScanView import ScanView
@@ -11,6 +12,7 @@ class AppController:
     def __init__(self, app):
         self.app = app
         self.interface = Interface()
+        self.target = Target()
         self.view = None
 
         #utl.temp_folder() # Create temp folder
@@ -66,7 +68,7 @@ class AppController:
             print(e)
             self.clean_close()
     
-    def attack_target(target):
+    def attack_target(self):
         # TODO
         raise NotImplementedError
             
@@ -81,3 +83,6 @@ class AppController:
         except Exception as e:
             print(e)
             self.app.destroy()
+
+    def set_target(self, bssid, ssid, protocol):
+        pass     
