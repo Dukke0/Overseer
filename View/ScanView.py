@@ -1,4 +1,4 @@
-from tkinter import NORMAL, DISABLED, ttk
+from tkinter import NORMAL, DISABLED, Toplevel, ttk
 import tkinter as tk
 from tkinter.messagebox import showerror
 from View.View import AbstractView
@@ -79,14 +79,33 @@ class ScanView(AbstractView):
 
     
     def start_testing_clicked(self, event):
+        '''
+        Creates a popup that shows a summary of the test plan
+        '''
+        summary_popup = Toplevel()
+        summary_popup.geometry("300x400")
+        
+        ttk.Label(summary_popup, text='Summary').grid(row=0, column=0)
+       
+        attack_button = ttk.Button(summary_popup, text='Continue')
+        attack_button.bind('<Button-1>', self.summary_continue_btn)
+        attack_button.grid(row=1, column=0)
+    
+    def summary_continue_btn(self, event):
+        '''
+        Event fired when the continue button from summary popup is clicked.
+        '''
         self.controller.attack_target()
 
     def config_testing_clicked(self, event):
+        '''
+        A popup is created showing the protocol's possible attack options
+        '''
         popup = TestOptions(self)
+    
         # TODO self.target_properties to popup
 
     def scan_btn_clicked(self, event):
-
         networks = self.controller.get_networks()
         for n in networks:
             parsed_net = ['-' if not i.strip() else i for i in n]

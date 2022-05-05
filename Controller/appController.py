@@ -13,10 +13,10 @@ class AppController:
         self.app = app
         self.interface = Interface()
         self.target = Target()
-        self.view = None
+        self.view = None # Only one view
 
         #utl.temp_folder() # Create temp folder
-        self.change_view(AppView) # Welcome page
+        self.change_view(ScanView) # Welcome page
 
 
     def change_view(self, viewClass):
