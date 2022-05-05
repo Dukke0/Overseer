@@ -1,11 +1,12 @@
-from tkinter import NORMAL, DISABLED, StringVar, Toplevel, ttk
+from tkinter import NORMAL, DISABLED, ttk
 import tkinter as tk
 from tkinter.messagebox import showerror
 from View.View import AbstractView
-from View.TestOptions import TestOptions
+from View.AttackOptions import TestOptions
 import time
 import tkinter.font as tkFont
 
+# https://stackoverflow.com/questions/5286093/display-listbox-with-columns-using-tkinter
 
 class ScanView(AbstractView):
 
@@ -36,7 +37,7 @@ class ScanView(AbstractView):
                                             length=200, mode='indeterminate')
 
 
-        
+        self.target_properties = None
         self.controller = None
 
     
@@ -67,19 +68,22 @@ class ScanView(AbstractView):
     # -- EVENTS ---
 
     def net_list_selected(self, event):
+        currItem = self.tv.focus()
+        self.target_properties = self.tv.item(currItem)['values']
+
         self.start_test_btn["state"] = NORMAL
         self.start_test_btn.bind('<Button-1>', self.start_testing_clicked)
 
         self.config_test_btn["state"] = NORMAL
         self.config_test_btn.bind('<Button-1>', self.config_testing_clicked)
 
-
     
     def start_testing_clicked(self, event):
-        pass
+        self.controller.attack_target()
 
     def config_testing_clicked(self, event):
         popup = TestOptions(self)
+        # TODO self.target_properties to popup
 
     def scan_btn_clicked(self, event):
 

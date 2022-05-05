@@ -1,6 +1,6 @@
 from tkinter import ttk
 import tkinter as tk
-from tkinter.messagebox import showerror, showinfo
+from tkinter.messagebox import showerror
 from View.View import AbstractView
 
 class AppView(AbstractView):

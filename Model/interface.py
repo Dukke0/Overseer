@@ -38,7 +38,7 @@ class Interface():
         self.intf = name
 
     def clean_exit(self):
-        utl.delete_temp()
+        # utl.delete_temp()
         sb.run(["sudo airmon-ng stop %s" % self.monitor], shell=True)
 
     def init_monitor(self):

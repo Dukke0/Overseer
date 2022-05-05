@@ -14,7 +14,7 @@ class AppController:
         self.view = None
 
         #utl.temp_folder() # Create temp folder
-        self.change_view(AppView) # Welcome page
+        self.change_view(ScanView) # Welcome page
 
 
     def change_view(self, viewClass):
@@ -43,7 +43,7 @@ class AppController:
         '''
 
         try:
-            self.interface.scan_networks()
+            # self.interface.scan_networks()
             return self.interface.get_networks()
         except AppException as ex:
             self.view.show_error(ex)
@@ -65,6 +65,10 @@ class AppController:
         except Exception as e:
             print(e)
             self.clean_close()
+    
+    def attack_target(target):
+        # TODO
+        raise NotImplementedError
             
         
     def get_scan_time(self):

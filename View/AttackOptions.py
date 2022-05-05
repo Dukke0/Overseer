@@ -7,6 +7,7 @@ class TestOptions(Toplevel):
         
         super().__init__(parent)
 
-        self.geometry=("200x400")
+        self.geometry=("400x300")
         self.geometry=("Test window")
+
 
