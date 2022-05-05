@@ -16,7 +16,7 @@ class AppController:
         self.view = None
 
         #utl.temp_folder() # Create temp folder
-        self.change_view(ScanView) # Welcome page
+        self.change_view(AppView) # Welcome page
 
 
     def change_view(self, viewClass):
