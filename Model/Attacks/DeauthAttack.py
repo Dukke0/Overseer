@@ -1,6 +1,7 @@
 
-from Model.AbstractAttack import AbstractAttack
+from Model.Attacks.AbstractAttack import AbstractAttack
 from Model.utils import target_dump
+import subprocess as sb
 
 class DeauthAttack(AbstractAttack):
 
@@ -14,7 +15,7 @@ class DeauthAttack(AbstractAttack):
             '-T', 'fields',
             '-e', 'wlan.rsn.capabilities.mfpr'] 
 
-        result = run_command(cmd, shell=False)
+        result = sb.run(cmd, capture_output=True, text=True, shell=False)
 
         if result.stdout.find('1') == -1:
             return False
