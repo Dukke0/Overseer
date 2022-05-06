@@ -29,24 +29,24 @@ class AppView(AbstractView):
         quit_button = ttk.Button(self, text='Quit')
         quit_button.grid(row=2, column=0)
 
+        self.popup = None
         self.controller = None
 
     def interface_window(self, event):
-        popup = Toplevel()
-        popup.geometry("300x400")
-        popup.configure(bg='red')
+        if self.popup:
+            self.popup.destroy
+        self.popup = Toplevel()
+        self.popup.geometry("300x400")
+        self.popup.configure(bg='red')
 
-        ttk.Label(popup, text='Select an interface to start').grid(row=0,column=0)
-        self.combobox = ttk.Combobox(popup)
+        ttk.Label(self.popup, text='Select an interface to start').grid(row=0,column=0)
+        self.combobox = ttk.Combobox(self.popup)
         self.combobox.bind('<Button-1>', self.interface_changed)
         self.combobox.grid(row=1, column=0)
 
-        self.startButton = ttk.Button(popup, text="Continue")
+        self.startButton = ttk.Button(self.popup, text="Continue")
         self.startButton.bind('<Button-1>', self.nextButton_clicked)
         self.startButton.grid(row=2, column=0)
-
-
-
 
     #-----EVENTS-------:
     def interface_changed(self, event):
@@ -60,6 +60,8 @@ class AppView(AbstractView):
             if info:
                 ifs_name = info[:info.find(':')]
                 self.controller.selected_interface(ifs_name)
+                self.popup.destroy()
+    
 
     def show_error(self, ex):
         showerror(title='Error', message=str(ex))
