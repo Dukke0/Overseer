@@ -13,7 +13,7 @@ class Interface():
         self.intf = ""
         self.monitor = ""
     
-    def get_scan_time(self):
+    def get_scan_time(self) -> int:
         return self.__scan_time
 
     def scan_networks(self):
@@ -34,21 +34,21 @@ class Interface():
     def get_networks(self):
         return utl.parse_networks_file(utl.wifi_file + '-01.csv')
 
-    def set_interface(self, name):
+    def set_interface(self, name: str) -> None:
         self.intf = name
 
-    def clean_exit(self):
+    def clean_exit(self) -> None:
         # utl.delete_temp()
         sb.run(["sudo airmon-ng stop %s" % self.monitor], shell=True)
 
-    def init_monitor(self):
+    def init_monitor(self) -> None:
         sb.run(["sudo airmon-ng start %s" % self.intf], capture_output=True, shell=True)
         monitor_name = sb.run(["iwconfig | grep mon"], capture_output=True, text=True, shell=True)
         self.monitor= monitor_name.stdout.split(" ")[0]
         if self.monitor == "":
             raise AppException("Could not enable monitor mode, use a card that allows it")
 
-    def get_list_interfaces(self):
+    def get_list_interfaces(self) -> list():
         list_ifs = sb.run([r"""ip -o link | grep ether | awk '{ print $2" : "$17 }'"""],
                         capture_output=True, text=True, shell=True)
         

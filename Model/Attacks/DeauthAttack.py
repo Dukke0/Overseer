@@ -8,6 +8,9 @@ class DeauthAttack(AbstractAttack):
     def __init__(self):
         super().__init__()
 
+    def attack_name() -> str:
+        return 'Deauthentication'
+
     def execute_attack():
         cmd = ['tshark',
             '-r', target_dump + '-01.cap',

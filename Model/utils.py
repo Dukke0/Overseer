@@ -2,13 +2,14 @@
 import pandas as pd
 import os, glob
 import time
+from typing import Union
 
 #Folder and files
 folder_name = "temp"
 wifi_file = folder_name + "/scan"
 target_dump = folder_name + "/target_dump" 
 
-def parse_networks_file(filename):
+def parse_networks_file(filename: str) -> list():
     '''
     Returns a list of networks, parsed with pandas. 
     TODO parse it without pandas
@@ -26,13 +27,14 @@ def parse_networks_file(filename):
         for f in fields:
             network.append(dic[f][i])
         detected_networks.append(network)
+        
     return detected_networks
 
-def set_temp(name):
+def set_temp(name: str) -> None:
     global folder_name
     folder_name = name
 
-def temp_folder():
+def temp_folder() -> int:
     current_path = os.getcwd()
     try:
         os.mkdir(current_path + '/temp')
@@ -40,11 +42,11 @@ def temp_folder():
     except FileExistsError as e:
         return 1
 
-def delete_file(file):
+def delete_file(file) -> None:
    for f in glob.glob(file + "*"):
       os.remove(f)
 
-def delete_temp():
+def delete_temp() -> Union[int, None]:
     current_path = os.getcwd()
     for root, dirs, files in os.walk(current_path + '/temp', topdown=False):
         for name in files:

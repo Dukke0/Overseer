@@ -1,6 +1,9 @@
 
 import tkinter as tk
 from Controller.appController import AppController
+from View.AppView import AppView
+from View.AttackView import AttackView
+from View.ScanView import ScanView
 
 class App(tk.Tk):
 
@@ -10,8 +13,9 @@ class App(tk.Tk):
 
         self.title('Wifipy')
         self.geometry('800x600')
+        self.eval('tk::PlaceWindow . center')
 
-        AppController(self)
+        AppController(self, ScanView)
 
 if __name__ == '__main__':
     app = App()

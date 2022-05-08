@@ -7,7 +7,7 @@ class AppView(AbstractView):
 
     def __init__(self, parent): 
         super().__init__(parent)
-        
+
         self.label = ttk.Label(self, text='Welcome to Wifipy')
         self.label.grid(row=0, column=1)
         """
@@ -22,6 +22,7 @@ class AppView(AbstractView):
         self.startButton = ttk.Button(self, text="Start")
         self.startButton.bind('<Button-1>', self.interface_window)
         self.startButton.grid(row=0, column=0)
+
 
         reports_button = ttk.Button(self, text='Reports')
         reports_button.grid(row=1, column=0)

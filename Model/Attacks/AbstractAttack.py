@@ -7,5 +7,9 @@ class AbstractAttack(ABC):
         self.target = target
 
     @abstractmethod
+    def attack_name() -> str:
+        pass
+
+    @abstractmethod
     def execute_attack():
         pass

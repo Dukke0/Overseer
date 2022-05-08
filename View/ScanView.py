@@ -43,7 +43,7 @@ class ScanView(AbstractView):
     
     # -- WIDGET CREATION ---
 
-    def create_treeview(self, c, r):
+    def create_treeview(self, c, r) -> ttk.Treeview:
         self.columns = (' ESSID', 'BSSID',' channel', ' Privacy', ' Cipher', ' Authentication')
         tv = ttk.Treeview(self, columns=self.columns, 
                             show='headings', height=10, selectmode='browse')
@@ -67,9 +67,12 @@ class ScanView(AbstractView):
 
     # -- EVENTS ---
 
-    def net_list_selected(self, event):
+    def net_list_selected(self, event) -> None:
         currItem = self.tv.focus()
         self.target_properties = self.tv.item(currItem)['values']
+        self.controller.change_target(bssid=self.target_properties[1],
+                                      essid=self.target_properties[0],
+                                      protocol=self.target_properties[3])
 
         self.start_test_btn["state"] = NORMAL
         self.start_test_btn.bind('<Button-1>', self.start_testing_clicked)
@@ -77,8 +80,9 @@ class ScanView(AbstractView):
         self.config_test_btn["state"] = NORMAL
         self.config_test_btn.bind('<Button-1>', self.config_testing_clicked)
 
-    
-    def start_testing_clicked(self, event):
+        
+
+    def start_testing_clicked(self, event) -> None:
         '''
         Creates a popup that shows a summary of the test plan
         '''
@@ -90,26 +94,32 @@ class ScanView(AbstractView):
         attack_button = ttk.Button(summary_popup, text='Continue')
         attack_button.bind('<Button-1>', self.summary_continue_btn)
         attack_button.grid(row=1, column=0)
+
     
-    def summary_continue_btn(self, event):
+    def summary_continue_btn(self, event) -> None:
         '''
         Event fired when the continue button from summary popup is clicked.
         '''
         self.controller.attack_target()
 
-    def config_testing_clicked(self, event):
+    def config_testing_clicked(self, event) -> None:
         '''
         A popup is created showing the protocol's possible attack options
         '''
         popup = TestOptions(self)
-    
-        # TODO self.target_properties to popup
+        target_info = self.controller.get_target_info()
+        attack_list = self.controller.protocol_attacks(target_info['protocol'])
+        popup.show_options(attack_list=attack_list)
 
-    def scan_btn_clicked(self, event):
+
+
+    def scan_btn_clicked(self, event) -> None:
         networks = self.controller.get_networks()
+
         for n in networks:
             parsed_net = ['-' if not i.strip() else i for i in n]
             self.tv.insert('', tk.END, values=tuple(parsed_net))
+
             for ix, val in enumerate(tuple(parsed_net)):
                 col_w = tkFont.Font().measure(val)
                 if self.tv.column(self.columns[ix],width=None)<col_w:
@@ -117,14 +127,14 @@ class ScanView(AbstractView):
             
     # -- FUNCTIONS ---
 
-    def hide_stop_progress(self):
+    def hide_stop_progress(self) -> None:
         self.scan_progress.stop()
         self.scan_progress.grid_forget()
 
     def show_error(self, ex):
         showerror(title='Error', message=str(ex))
 
-    def sortby(self,col, descending):
+    def sortby(self,col, descending) -> None:
         """sort tree contents when a column header is clicked on"""
         # grab values to sort
         data = [(self.tv.set(child, col), child) \
