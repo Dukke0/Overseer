@@ -5,11 +5,10 @@ import subprocess as sb
 
 class BruteForceAttack(AbstractAttack):
 
-    def __init__(self):
-        super().__init__()
-
-    def attack_name() -> str:
+    @classmethod
+    def attack_name(cls) -> str:
         return 'Brute Force'
 
-    def execute_attack():
+    @classmethod
+    def execute_attack(cls):
         pass

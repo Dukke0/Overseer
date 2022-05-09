@@ -14,7 +14,6 @@ class AttackPlan():
     
     @attack_list.setter
     def attack_list(self, values: Union[AbstractAttack, list]) -> None:
-
         if type(values) == list:
             for val in range(len(values)):
                 self.__attack_list.append(val)

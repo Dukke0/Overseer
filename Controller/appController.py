@@ -102,4 +102,7 @@ class AppController:
         return protocol.attacks_list()
 
     def get_target_info(self) -> dict():
+        '''
+        Function that returns target's info in a dictionary form
+        '''
         return vars(self.target)

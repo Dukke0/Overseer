@@ -70,7 +70,7 @@ class ScanView(AbstractView):
     def net_list_selected(self, event) -> None:
         currItem = self.tv.focus()
         self.target_properties = self.tv.item(currItem)['values']
-        print('prop', self.target_properties)
+
         self.controller.change_target(bssid=self.target_properties[1],
                                       essid=self.target_properties[0],
                                       protocol=self.target_properties[3])
@@ -112,11 +112,8 @@ class ScanView(AbstractView):
 
         self.options_popup = TestOptions(self)
         target_info = self.controller.get_target_info()
-        print(target_info)
         attack_list = self.controller.protocol_attacks(target_info['protocol'])
-        print(attack_list)
         self.options_popup.show_options(attack_list=attack_list)
-
 
 
     def scan_btn_clicked(self, event) -> None:

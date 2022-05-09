@@ -12,13 +12,12 @@ class TestOptions(Toplevel):
         
         super().__init__(parent)
 
+        self.parent = parent
         self.label = ttk.Label(self, text='Available attacks').grid(row=0, column=0)
         self.options = list()
-        print(parent)
     
     def change(self, n):
         btn, attack = self.options[n]
-        print(parent)        
 
     def show_options(self, attack_list: tuple) -> None:
         self.options.clear()

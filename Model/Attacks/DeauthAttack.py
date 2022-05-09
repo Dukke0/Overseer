@@ -5,13 +5,12 @@ import subprocess as sb
 
 class DeauthAttack(AbstractAttack):
 
-    def __init__(self):
-        super().__init__()
-
-    def attack_name() -> str:
+    @classmethod
+    def attack_name(cls) -> str:
         return 'Deauthentication'
 
-    def execute_attack():
+    @classmethod
+    def execute_attack(cls) -> bool:
         cmd = ['tshark',
             '-r', target_dump + '-01.cap',
             '-Y', 'wlan.rsn.capabilities',
