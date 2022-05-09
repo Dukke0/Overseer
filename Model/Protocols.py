@@ -27,3 +27,12 @@ class WPA(AbstractProtocol):
     @classmethod
     def attacks_list(cls) -> list:
         return cls.__attacks_list
+
+class OPEN(AbstractProtocol):
+
+    __attacks_list = list()
+
+    @classmethod
+    def attacks_list(cls) -> list:
+        return cls.__attacks_list
+

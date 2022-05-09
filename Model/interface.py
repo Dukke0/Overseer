@@ -16,7 +16,7 @@ class Interface():
     def get_scan_time(self) -> int:
         return self.__scan_time
 
-    def scan_networks(self):
+    def scan_networks(self) -> None:
         '''
         Scans the signals around using Aircack tool.
         '''
@@ -31,7 +31,7 @@ class Interface():
         time.sleep(self.__scan_time)
         process.terminate()
      
-    def get_networks(self):
+    def get_networks(self) -> list():
         return utl.parse_networks_file(utl.wifi_file + '-01.csv')
 
     def set_interface(self, name: str) -> None:

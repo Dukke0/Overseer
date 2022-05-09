@@ -1,6 +1,7 @@
 #from View.AppView import AppView
 from Controller.appException import AppException
-from Model.Protocols import WPA, AbstractProtocol
+from Model.AttackPlan import AttackPlan
+from Model.Protocols import OPEN, WPA, AbstractProtocol
 from Model.Target import Target
 from Model.interface import Interface
 from View.AppView import AppView
@@ -14,6 +15,7 @@ class AppController:
         self.app = app
         self.interface = Interface()
         self.target = Target()
+        self.attack_plan = AttackPlan()
         self.view = None
         self.change_view(firstView) # Only one view
 
@@ -86,14 +88,18 @@ class AppController:
             self.app.destroy()
 
     def change_target(self, bssid: str, essid: str, protocol: str) -> None:
+
         self.target.bssid = bssid
         self.target.essid = essid
         protocol = protocol.strip()
+
         if protocol == 'WPA' or protocol == 'WPA2' or protocol == 'WPA/WPA2':
             self.target.protocol = WPA
+        elif protocol == 'OPN':
+            self.target.protocol = OPEN
 
     def protocol_attacks(self, protocol: AbstractProtocol) -> list():
         return protocol.attacks_list()
 
-    def get_target_info(self):
+    def get_target_info(self) -> dict():
         return vars(self.target)
