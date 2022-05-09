@@ -10,7 +10,7 @@ class DeauthAttack(AbstractAttack):
         return 'Deauthentication'
 
     @classmethod
-    def execute_attack(cls) -> bool:
+    def execute_attack(cls, target=None) -> bool:
         cmd = ['tshark',
             '-r', target_dump + '-01.cap',
             '-Y', 'wlan.rsn.capabilities',

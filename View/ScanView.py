@@ -70,10 +70,11 @@ class ScanView(AbstractView):
     def net_list_selected(self, event) -> None:
         currItem = self.tv.focus()
         self.target_properties = self.tv.item(currItem)['values']
-
+        #TODO self.target_properties a dict
         self.controller.change_target(bssid=self.target_properties[1],
                                       essid=self.target_properties[0],
-                                      protocol=self.target_properties[3])
+                                      protocol=self.target_properties[3],
+                                      channel=self.target_properties[2])
 
         self.start_test_btn["state"] = NORMAL
         self.start_test_btn.bind('<Button-1>', self.start_testing_clicked)
