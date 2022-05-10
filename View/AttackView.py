@@ -1,4 +1,6 @@
+import time
 from View.View import AbstractView
+from Model.Attacks.DeauthAttack import TestAttack
 from tkinter import ttk
 import tkinter as tk
 from tkinter import END
@@ -7,7 +9,9 @@ class AttackView(AbstractView):
 
     def __init__(self, parent):
         super().__init__(parent)
-        
+
+        self.parent = parent
+
         self.label = ttk.Label(self, text="here comes the target info")
         self.label.grid(row=0, column=0, pady=(20, 0))
 
@@ -23,7 +27,21 @@ class AttackView(AbstractView):
         vsb.grid(column=box_c+1, row=box_r, sticky='ns', in_=self)
 
         self.stop_btn = ttk.Button(self, text="Stop")
+        self.stop_btn.bind('<Button-1>', self.test_attack)
         self.stop_btn.grid(row=box_r + 2, column=0, sticky='w')
+
+    def test_attack(self, event):
+        self.controller.attack_plan.attack_list = TestAttack
+        #t0 = time.time()
+        for path in self.controller.attack_target():
+            """t1= time.time()
+            while t1 - t0 < 1:
+                t1 = time.time()
+            t0 = time.time()"""
+            print('a')
+            self.parent.update()
+            self.info_box.insert('end', path)
+            
 
     def show_error():
         pass

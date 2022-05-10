@@ -71,15 +71,18 @@ class AppController:
             print(e)
             self.clean_close()
     
-    def attack_target(self):
-        # TODO
-        raise NotImplementedError
-            
-        
-    def get_scan_time(self):
+    def attack_target(self) -> str:
+        try:
+            for generator in self.attack_plan.execute_plan():
+                for path in generator:
+                    yield path
+        except Exception as e:
+            yield e
+
+    def get_scan_time(self) -> int:
         return self.interface.get_scan_time()
 
-    def clean_close(self):
+    def clean_close(self) -> None:
         try:
             self.interface.clean_exit()
             self.app.destroy()
@@ -87,10 +90,11 @@ class AppController:
             print(e)
             self.app.destroy()
 
-    def change_target(self, bssid: str, essid: str, protocol: str) -> None:
-
-        self.target.bssid = bssid
-        self.target.essid = essid
+    def change_target(self, bssid: str, essid: str, protocol: str, channel:  str) -> None:
+        #TODO *args?
+        self.target.bssid = bssid.strip()
+        self.target.essid = essid.strip()
+        self.target.channel = channel.strip()
         protocol = protocol.strip()
 
         if protocol == 'WPA' or protocol == 'WPA2' or protocol == 'WPA/WPA2':

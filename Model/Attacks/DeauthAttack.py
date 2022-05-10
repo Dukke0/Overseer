@@ -17,9 +17,27 @@ class DeauthAttack(AbstractAttack):
             '-T', 'fields',
             '-e', 'wlan.rsn.capabilities.mfpr'] 
 
-        result = sb.run(cmd, capture_output=True, text=True, shell=False)
+        result = sb.Popen(cmd, stdout=sb.PIPE, universal_newlines=True)
+        for stdout_line in iter(result.stdout.readline, ""):
+            yield stdout_line 
+        result.stdout.close()
+        return_code = result.wait()
+        if return_code:
+            raise sb.CalledProcessError(return_code, cmd)
 
-        if result.stdout.find('1') == -1:
+        """if result.stdout.find('1') == -1:
             return False
         else: 
-            return True
+            return True"""
+
+
+class TestAttack(AbstractAttack):
+
+    @classmethod
+    def attack_name(cls) -> str:
+        return 'test'
+
+    @classmethod
+    def execute_attack(cls, target=None) -> bool:
+        return DeauthAttack.execute_attack()
+ 

@@ -15,7 +15,7 @@ class App(tk.Tk):
         self.geometry('800x600')
         self.eval('tk::PlaceWindow . center')
 
-        AppController(self, ScanView)
+        AppController(self, AttackView)
 
 if __name__ == '__main__':
     app = App()
