@@ -31,7 +31,27 @@ class DictionaryAttack(AbstractAttack):
             '-b', target.bssid,
             target_dump + "-01.cap"]
         
-        output = sb.run(cmd, capture_output=True, text=True, shell=True)
+        result = sb.Popen(cmd, stdout=sb.PIPE, universal_newlines=True)
+        
+        for stdout_line in iter(result.stdout.readline, ""):
+            """
+            if stdout_line.find('No valid WPA handshake found'):
+                raise StopIteration(True)
+            elif stdout_line.find('KEY FOUND'):
+                raise StopIteration(True)
+            """
+            raise StopIteration(True)
+            yield stdout_line 
+
+        result.stdout.close()
+        return_code = result.wait()
+
+        if return_code:
+            raise sb.CalledProcessError(return_code, cmd)
+
+        """"
+        if return_code:
+            raise sb.CalledProcessError(return_code, cmd)
 
         if output.stdout.find('No valid WPA handshakes found'):
             return False 
@@ -40,3 +60,4 @@ class DictionaryAttack(AbstractAttack):
             return True
 
         return False
+"""

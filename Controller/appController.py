@@ -6,6 +6,7 @@ from Model.Target import Target
 from Model.interface import Interface
 from View.AppView import AppView
 from View.ScanView import ScanView
+from Model.Report import Report
 import Model.utils as utl
 import logging
 
@@ -16,6 +17,7 @@ class AppController:
         self.interface = Interface()
         self.target = Target()
         self.attack_plan = AttackPlan()
+        self.report = Report()
         self.view = None
         self.change_view(firstView) # Only one view
 
@@ -76,6 +78,9 @@ class AppController:
             for generator in self.attack_plan.execute_plan():
                 for path in generator:
                     yield path
+        except StopIteration as si:
+            #self.report.communicate_result(path)
+            pass
         except Exception as e:
             yield e
 

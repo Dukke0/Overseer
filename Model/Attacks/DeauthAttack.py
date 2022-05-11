@@ -18,10 +18,13 @@ class DeauthAttack(AbstractAttack):
             '-e', 'wlan.rsn.capabilities.mfpr'] 
 
         result = sb.Popen(cmd, stdout=sb.PIPE, universal_newlines=True)
+
         for stdout_line in iter(result.stdout.readline, ""):
             yield stdout_line 
+
         result.stdout.close()
         return_code = result.wait()
+
         if return_code:
             raise sb.CalledProcessError(return_code, cmd)
 
@@ -39,5 +42,12 @@ class TestAttack(AbstractAttack):
 
     @classmethod
     def execute_attack(cls, target=None) -> bool:
-        return DeauthAttack.execute_attack()
- 
+        cmd = ["locate", "a"]
+        popen = sb.Popen(cmd, stdout=sb.PIPE, universal_newlines=True)
+        for stdout_line in iter(popen.stdout.readline, ""):
+            raise StopIteration(True)
+            yield stdout_line 
+        popen.stdout.close()
+        return_code = popen.wait()
+        if return_code:
+            raise sb.CalledProcessError(return_code, cmd)
