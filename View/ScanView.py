@@ -3,6 +3,7 @@ import tkinter as tk
 from tkinter.messagebox import showerror
 from View.View import AbstractView
 from View.AttackOptions import TestOptions
+from View.AttackView import AttackView
 import time
 import tkinter.font as tkFont
 
@@ -102,7 +103,8 @@ class ScanView(AbstractView):
         '''
         Event fired when the continue button from summary popup is clicked.
         '''
-        self.controller.attack_target()
+        self.controller.change_view(AttackView)
+        #self.controller.attack_target()
 
     def config_testing_clicked(self, event) -> None:
         '''

@@ -30,6 +30,13 @@ class AttackView(AbstractView):
         self.stop_btn.bind('<Button-1>', self.test_attack)
         self.stop_btn.grid(row=box_r + 2, column=0, sticky='w')
 
+        self.check_report_btn = ttk.Button(self, text='Check report')
+        self.check_report_btn.bind('<Button-1>', self.open_report)
+        self.check_report_btn.grid(row=box_r + 2, column=0, sticky='e')
+    
+    def open_report(self, event):
+        pass
+
     def test_attack(self, event):
         self.controller.attack_plan.attack_list = TestAttack
         #t0 = time.time()

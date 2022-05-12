@@ -99,7 +99,7 @@ class AppController:
         #TODO *args?
         self.target.bssid = bssid.strip()
         self.target.essid = essid.strip()
-        self.target.channel = channel.strip()
+        self.target.channel = channel
         protocol = protocol.strip()
 
         if protocol == 'WPA' or protocol == 'WPA2' or protocol == 'WPA/WPA2':
