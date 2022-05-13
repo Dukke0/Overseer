@@ -83,26 +83,31 @@ class ScanView(AbstractView):
         self.config_test_btn["state"] = NORMAL
         self.config_test_btn.bind('<Button-1>', self.config_testing_clicked)
 
-        
-
     def start_testing_clicked(self, event) -> None:
         '''
         Creates a popup that shows a summary of the test plan
         '''
-        summary_popup = Toplevel()
-        summary_popup.geometry("300x400")
+        #TODO to class
+        self.summary_popup = Toplevel()
+        self.summary_popup.geometry("300x400")
         
-        ttk.Label(summary_popup, text='Summary').grid(row=0, column=0)
-       
-        attack_button = ttk.Button(summary_popup, text='Continue')
+        ttk.Label(self.summary_popup, text='Summary').grid(row=0, column=0)
+        
+        for idx, attack in enumerate(self.controller.get_plan()):
+            ttk.Label(self.summary_popup, text=attack.attack_name()).grid(row=idx+1, column=0)
+
+        attack_button = ttk.Button(self.summary_popup, text='Continue')
         attack_button.bind('<Button-1>', self.summary_continue_btn)
-        attack_button.grid(row=1, column=0)
+        attack_button.grid(row=len(self.controller.get_plan())+2, column=0)
 
     
     def summary_continue_btn(self, event) -> None:
         '''
         Event fired when the continue button from summary popup is clicked.
         '''
+        self.summary_popup.destroy()
+        if self.options_popup:
+            self.options_popup.destroy()
         self.controller.change_view(AttackView)
         #self.controller.attack_target()
 

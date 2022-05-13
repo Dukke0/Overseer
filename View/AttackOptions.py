@@ -18,7 +18,11 @@ class TestOptions(Toplevel):
     
     def change(self, n):
         btn, attack = self.options[n]
-
+        if 'selected' in btn.state():
+            self.parent.controller.add_attack_to_plan(attack)
+        else:
+            self.parent.controller.remove_attack_from_plan(attack)
+        
     def show_options(self, attack_list: tuple) -> None:
         self.options.clear()
         for idx, a in enumerate(attack_list):
@@ -26,11 +30,7 @@ class TestOptions(Toplevel):
 
     def create_option(self, option: AbstractAttack, idx: int):
         cb = ttk.Checkbutton(self, text='Option ' + option.attack_name(), command=partial(self.change, idx))
+        cb.state(['!selected'])
         cb.grid(row=idx+1, column=0)
         self.options.append((cb, option))
-        
-        
-
-        
-
 

@@ -1,6 +1,7 @@
 #from View.AppView import AppView
 from Controller.appException import AppException
 from Model.AttackPlan import AttackPlan
+from Model.Attacks.AbstractAttack import AbstractAttack
 from Model.Protocols import OPEN, WPA, AbstractProtocol
 from Model.Target import Target
 from Model.interface import Interface
@@ -75,6 +76,7 @@ class AppController:
     
     def attack_target(self) -> str:
         try:
+            self.interface.sniff_target(self.target)
             for generator in self.attack_plan.execute_plan():
                 for path in generator:
                     yield path
@@ -108,7 +110,17 @@ class AppController:
             self.target.protocol = OPEN
 
     def protocol_attacks(self, protocol: AbstractProtocol) -> list():
-        return protocol.attacks_list()
+        if protocol != None:
+            return protocol.attacks_list() # TODO manage none
+
+    def get_plan(self):
+        return self.attack_plan.attack_list
+
+    def add_attack_to_plan(self, attack: AbstractAttack) -> None:
+        self.attack_plan.add_attack(attack)
+    
+    def remove_attack_from_plan(self, attack: AbstractAttack) -> None:
+        self.attack_plan.remove_attack(attack)
 
     def get_target_info(self) -> dict():
         '''

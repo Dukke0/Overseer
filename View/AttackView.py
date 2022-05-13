@@ -18,7 +18,6 @@ class AttackView(AbstractView):
         box_r, box_c = 1, 0
         self.info_box = tk.Text(self, height=20, width=60)
 
-
         vsb = ttk.Scrollbar(orient="vertical", command=self.info_box.yview)
         
         self.info_box.configure(yscrollcommand=vsb.set)
@@ -38,7 +37,6 @@ class AttackView(AbstractView):
         pass
 
     def test_attack(self, event):
-        self.controller.attack_plan.attack_list = TestAttack
         #t0 = time.time()
         for path in self.controller.attack_target():
             """t1= time.time()

@@ -2,7 +2,8 @@ import subprocess as sb
 from asyncio.subprocess import PIPE
 import time
 from Controller.appException import AppException
-
+from Model.Target import Target
+from Model.utils import target_dump
 import Model.utils as utl
 
 class Interface():
@@ -56,3 +57,40 @@ class Interface():
         list_ifs = list_ifs.split('\n') # Split interfaces
         
         return list_ifs[:-1]
+    
+    def sniff_target(self, target_wifi):
+        '''
+        Sniff packets related to our target network
+        '''
+        
+        cmd = ['airodump-ng',
+            '-c', str(target_wifi.channel),
+            '--bssid', target_wifi.bssid,
+            '--write', target_dump,
+            '--wps',
+            self.monitor]
+
+        process = sb.Popen(cmd, stdout=PIPE)
+        time.sleep(self.__scan_time)
+        process.terminate()
+        
+        #out, err = process.communicate()
+        #target_wifi.wps = self.get_wps(out, target_wifi)
+    
+        
+    def get_wps(self, data, target):
+        data = data.decode("utf-8")
+        start_idx = data.find(target.bssid)
+        if start_idx == -1:
+            return -1
+        end_idx = data.find("\n", start_idx)
+        line = data[start_idx:end_idx]
+        wps = " ".join(line.split()).split()[11] # 11 is where wps value is placed inside the lane
+        #TODO null at 11
+        print('WPS value: ' + wps)
+        """
+        if wps == "1.0" or wps == "2.0":
+            return WPS_STATE.UNLOCKED
+        else:
+            return WPS_STATE.LOCKED
+        """
