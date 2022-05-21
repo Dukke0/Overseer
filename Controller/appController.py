@@ -17,12 +17,12 @@ class AppController:
         self.app = app
         self.interface = Interface()
         self.target = Target()
-        self.attack_plan = AttackPlan()
+        self.attack_plan = AttackPlan(target=self.target)
         self.report = Report()
         self.view = None
         self.change_view(firstView) # Only one view
 
-        #utl.temp_folder() # Create temp folder
+        utl.temp_folder() # Create temp folder
 
 
     def change_view(self, viewClass) -> None:
@@ -51,7 +51,7 @@ class AppController:
         '''
 
         try:
-            # self.interface.scan_networks()
+            self.interface.scan_networks()
             return self.interface.get_networks()
         except AppException as ex:
             self.view.show_error(ex)
@@ -76,7 +76,7 @@ class AppController:
     
     def attack_target(self) -> str:
         try:
-            self.interface.sniff_target(self.target)
+            #self.interface.sniff_target(self.target)
             for generator in self.attack_plan.execute_plan():
                 for path in generator:
                     yield path
@@ -84,7 +84,9 @@ class AppController:
             #self.report.communicate_result(path)
             pass
         except Exception as e:
-            yield e
+            print(e)
+            yield 'error'
+            #self.clean_close()
 
     def get_scan_time(self) -> int:
         return self.interface.get_scan_time()

@@ -1,5 +1,6 @@
 
 import tkinter as tk
+import customtkinter as ctk
 from Controller.appController import AppController
 from View.AppView import AppView
 from View.AttackView import AttackView
@@ -16,7 +17,7 @@ class App(tk.Tk):
         self.geometry('800x600')
         self.eval('tk::PlaceWindow . center')
 
-        AppController(self, ScanView)
+        AppController(self, AttackView)
 
 if __name__ == '__main__':
     #r = Report()

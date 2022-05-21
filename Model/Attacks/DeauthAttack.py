@@ -11,28 +11,24 @@ class DeauthAttack(AbstractAttack):
 
     @classmethod
     def execute_attack(cls, target=None) -> bool:
-        cmd = ['tshark',
+        cmd = ['sudo',
+            'tshark',
             '-r', target_dump + '-01.cap',
             '-Y', 'wlan.rsn.capabilities',
             '-T', 'fields',
             '-e', 'wlan.rsn.capabilities.mfpr'] 
 
         result = sb.Popen(cmd, stdout=sb.PIPE, universal_newlines=True)
-
-        for stdout_line in iter(result.stdout.readline, ""):
-            yield stdout_line 
+        if result.stdout.read().find('1') == -1:
+            yield 'Vulnerability found: Network is vulnerable to deauthentication attacks.'
+        else:
+            yield 'Network is not vulnerable to deauthentication attacks.'
 
         result.stdout.close()
         return_code = result.wait()
 
         if return_code:
             raise sb.CalledProcessError(return_code, cmd)
-
-        """if result.stdout.find('1') == -1:
-            return False
-        else: 
-            return True"""
-
 
 class TestAttack(AbstractAttack):
 
@@ -42,12 +38,31 @@ class TestAttack(AbstractAttack):
 
     @classmethod
     def execute_attack(cls, target=None) -> bool:
-        cmd = ["locate", "a"]
-        popen = sb.Popen(cmd, stdout=sb.PIPE, universal_newlines=True)
-        for stdout_line in iter(popen.stdout.readline, ""):
-            raise StopIteration(True)
-            yield stdout_line 
-        popen.stdout.close()
-        return_code = popen.wait()
+
+        '''
+        Attempts to crack the captured hash containing the password with a dictionary attack using the Aircrack tool 
+        '''
+        target_dump = 'Model/files/handshake'
+        cmd = ['sudo',
+            'aircrack-ng',
+            '-w', "Model/files/pass_dict",
+            '-b', 'E8:DE:27:B0:14:C9',
+            target_dump + "-01.cap"]
+        
+        result = sb.Popen(cmd, stdout=sb.PIPE, universal_newlines=True)
+        #for l in iter(result.stdout.readline, ""):
+            #yield l
+        output = result.stdout.read()
+
+        if output.find('No valid WPA handshakes found') != -1:
+            yield 'No valid WPA handshakes found'
+        elif output.find('KEY FOUND') != -1:
+            yield 'KEY FOUND'
+        elif output.find('KEY NOT FOUND') != -1:
+            yield 'KEY NOT FOUND'
+
+        result.stdout.close()
+        return_code = result.wait()
+
         if return_code:
             raise sb.CalledProcessError(return_code, cmd)

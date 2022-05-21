@@ -1,6 +1,6 @@
 import time
 from View.View import AbstractView
-from Model.Attacks.DeauthAttack import TestAttack
+from Model.Attacks.DeauthAttack import DeauthAttack, TestAttack
 from tkinter import ttk
 import tkinter as tk
 from tkinter import END
@@ -38,12 +38,13 @@ class AttackView(AbstractView):
 
     def test_attack(self, event):
         #t0 = time.time()
-        for path in self.controller.attack_target():
-            """t1= time.time()
+        """t1= time.time()
             while t1 - t0 < 1:
                 t1 = time.time()
             t0 = time.time()"""
-            print('a')
+        self.controller.attack_plan.attack_list = TestAttack
+        for path in self.controller.attack_target():
+            
             self.parent.update()
             self.info_box.insert('end', path)
             

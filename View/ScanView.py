@@ -91,7 +91,7 @@ class ScanView(AbstractView):
         self.summary_popup = Toplevel()
         self.summary_popup.geometry("300x400")
         
-        ttk.Label(self.summary_popup, text='Summary').grid(row=0, column=0)
+        ttk.Label(self.summary_popup, text='Summary').grid(row=0, column=2)
         
         for idx, attack in enumerate(self.controller.get_plan()):
             ttk.Label(self.summary_popup, text=attack.attack_name()).grid(row=idx+1, column=0)

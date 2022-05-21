@@ -39,7 +39,7 @@ class Interface():
         self.intf = name
 
     def clean_exit(self) -> None:
-        # utl.delete_temp()
+        utl.delete_temp()
         sb.run(["sudo airmon-ng stop %s" % self.monitor], shell=True)
 
     def init_monitor(self) -> None:
@@ -63,7 +63,8 @@ class Interface():
         Sniff packets related to our target network
         '''
         
-        cmd = ['airodump-ng',
+        cmd = ['sudo',
+            'airodump-ng',
             '-c', str(target_wifi.channel),
             '--bssid', target_wifi.bssid,
             '--write', target_dump,
