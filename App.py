@@ -6,6 +6,7 @@ from View.AppView import AppView
 from View.AttackView import AttackView
 from View.ScanView import ScanView
 from Model.Report import Report
+import sv_ttk
 
 class App(tk.Tk):
 
@@ -14,10 +15,17 @@ class App(tk.Tk):
         super().__init__()
 
         self.title('Wifipy')
-        self.geometry('800x600')
+        #self.geometry('800x600')
         self.eval('tk::PlaceWindow . center')
 
-        AppController(self, AttackView)
+        sv_ttk.set_theme("light")
+        sv_ttk.set_theme("dark")
+        sv_ttk.use_light_theme()
+        #sv_ttk.use_dark_theme()
+
+        AppController(self, ScanView)
+
+        
 
 if __name__ == '__main__':
     #r = Report()

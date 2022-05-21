@@ -14,23 +14,25 @@ class ScanView(AbstractView):
     def __init__(self, parent): 
         super().__init__(parent)
         self.parent = parent
+        parent.grid_rowconfigure(1, weight=1)
+        parent.grid_columnconfigure(0, weight=1)
         parent.protocol("WM_DELETE_WINDOW", self.on_closing)
 
         self.tv = None
         # SIDE BUTTONS
-        self.start_test_btn = ttk.Button(self, text="Start Testing", state=DISABLED)
-        self.start_test_btn.grid(row=2, column=0)
+        self.start_test_btn = ttk.Button(self, text="Start Testing", state=DISABLED, style="Accent.TButton")
+        self.start_test_btn.grid(row=0, column=0, sticky='N')
 
-        self.config_test_btn = ttk.Button(self, text="Test Options", state=DISABLED)
-        self.config_test_btn.grid(row=3, column=0)
+        self.config_test_btn = ttk.Button(self, text="Test Options", state=DISABLED, style="Accent.TButton")
+        self.config_test_btn.grid(row=0, column=0, sticky='N', pady='40')
 
         # SCAN BUTTON
         self.scan_btn = ttk.Button(self, text="Scan networks")
         self.scan_btn.bind('<Button-1>', self.scan_btn_clicked)
-        self.scan_btn.grid(row=2, column=2)
+        self.scan_btn.grid(row=2, column=1, sticky='E')
         
         # NETWORK LIST WITH SCROLLBAR:
-        self.tv = self.create_treeview(0,0)
+        self.tv = self.create_treeview(r=0,c=1)
         self.tv.bind('<<TreeviewSelect>>', self.net_list_selected)
 
         # PROGRESS BAR
@@ -48,16 +50,15 @@ class ScanView(AbstractView):
         self.columns = (' ESSID', 'BSSID',' channel', ' Privacy', ' Cipher', ' Authentication')
         tv = ttk.Treeview(self, columns=self.columns, 
                             show='headings', height=10, selectmode='browse')
-        tv.grid(row=0, column=0)
 
         vsb = ttk.Scrollbar(orient="vertical", command=tv.yview)
         hsb = ttk.Scrollbar(orient="horizontal", command=tv.xview)
 
-        tv.configure(yscrollcommand=vsb.set, xscrollcommand=hsb.set)
+        #tv.configure(yscrollcommand=vsb.set, xscrollcommand=hsb.set)
 
         tv.grid(column=c, row=r, sticky='nsew', in_=self)
-        vsb.grid(column=c+1, row=0, sticky='ns', in_=self)
-        hsb.grid(column=0, row=r+1, sticky='ew', in_=self)
+        vsb.grid(column=c+1, row=r, sticky='ns', in_=self)
+        hsb.grid(column=c, row=r+1, sticky='ew', in_=self)
 
         for i, col in enumerate(self.columns):
             tv.column(column=i, width=100)

@@ -1,6 +1,7 @@
 from tkinter import Toplevel, ttk
 import tkinter as tk
 from tkinter.messagebox import showerror
+from turtle import bgcolor
 from View.View import AbstractView
 
 class AppView(AbstractView):
@@ -38,14 +39,13 @@ class AppView(AbstractView):
             self.popup.destroy
         self.popup = Toplevel()
         self.popup.geometry("300x400")
-        self.popup.configure(bg='red')
 
         ttk.Label(self.popup, text='Select an interface to start').grid(row=0,column=0)
         self.combobox = ttk.Combobox(self.popup)
         self.combobox.bind('<Button-1>', self.interface_changed)
         self.combobox.grid(row=1, column=0)
 
-        self.startButton = ttk.Button(self.popup, text="Continue")
+        self.startButton = ttk.Button(self.popup, text="Continue", style="Accent.TButton")
         self.startButton.bind('<Button-1>', self.nextButton_clicked)
         self.startButton.grid(row=2, column=0)
 
