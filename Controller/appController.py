@@ -77,7 +77,7 @@ class AppController:
     def attack_target(self) -> str:
         try:
             #self.interface.sniff_target(self.target)
-            for generator in self.attack_plan.execute_plan():
+            for generator in self.attack_plan.execute_plan(target=self.target, interface=self.interface):
                 for path in generator:
                     yield path
         except StopIteration as si:

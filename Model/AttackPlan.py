@@ -32,10 +32,10 @@ class AttackPlan():
     def target(self, target: Target) -> None:
         self.__target = Target
     
-    def execute_plan(self) -> list():
+    def execute_plan(self, **kwargs) -> list():
         generators_list = list()
         for attack in self.__attack_list:
-            generators_list.append(attack.execute_attack(target=self.__target))
+            generators_list.append(attack.execute_attack(**kwargs))
         return generators_list
 
  

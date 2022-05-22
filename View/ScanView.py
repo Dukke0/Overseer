@@ -14,20 +14,20 @@ class ScanView(AbstractView):
     def __init__(self, parent): 
         super().__init__(parent)
         self.parent = parent
-        parent.grid_rowconfigure(1, weight=1)
+        parent.grid_rowconfigure(0, weight=1)
         parent.grid_columnconfigure(0, weight=1)
         parent.protocol("WM_DELETE_WINDOW", self.on_closing)
 
         self.tv = None
         # SIDE BUTTONS
         self.start_test_btn = ttk.Button(self, text="Start Testing", state=DISABLED, style="Accent.TButton")
-        self.start_test_btn.grid(row=0, column=0, sticky='N')
+        self.start_test_btn.grid(row=0, column=0, sticky='N', padx=10)
 
         self.config_test_btn = ttk.Button(self, text="Test Options", state=DISABLED, style="Accent.TButton")
-        self.config_test_btn.grid(row=0, column=0, sticky='N', pady='40')
+        self.config_test_btn.grid(row=0, column=0, sticky='N', pady='40', padx=10)
 
         # SCAN BUTTON
-        self.scan_btn = ttk.Button(self, text="Scan networks")
+        self.scan_btn = ttk.Button(self, text="Scan networks", style="Accent.TButton")
         self.scan_btn.bind('<Button-1>', self.scan_btn_clicked)
         self.scan_btn.grid(row=2, column=1, sticky='E')
         
@@ -54,7 +54,7 @@ class ScanView(AbstractView):
         vsb = ttk.Scrollbar(orient="vertical", command=tv.yview)
         hsb = ttk.Scrollbar(orient="horizontal", command=tv.xview)
 
-        #tv.configure(yscrollcommand=vsb.set, xscrollcommand=hsb.set)
+        tv.configure(yscrollcommand=vsb.set, xscrollcommand=hsb.set)
 
         tv.grid(column=c, row=r, sticky='nsew', in_=self)
         vsb.grid(column=c+1, row=r, sticky='ns', in_=self)
@@ -92,7 +92,7 @@ class ScanView(AbstractView):
         self.summary_popup = Toplevel()
         self.summary_popup.geometry("300x400")
         
-        ttk.Label(self.summary_popup, text='Summary').grid(row=0, column=2)
+        ttk.Label(self.summary_popup, text='Summary').grid(row=0, column=0)
         
         for idx, attack in enumerate(self.controller.get_plan()):
             ttk.Label(self.summary_popup, text=attack.attack_name()).grid(row=idx+1, column=0)

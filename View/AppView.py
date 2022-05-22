@@ -1,7 +1,6 @@
 from tkinter import Toplevel, ttk
 import tkinter as tk
 from tkinter.messagebox import showerror
-from turtle import bgcolor
 from View.View import AbstractView
 
 class AppView(AbstractView):
@@ -9,8 +8,8 @@ class AppView(AbstractView):
     def __init__(self, parent): 
         super().__init__(parent)
 
-        self.label = ttk.Label(self, text='Welcome to Wifipy')
-        self.label.grid(row=0, column=1)
+        self.label = ttk.Label(self, text='Welcome to Wifipy', font=(25))
+        self.label.grid(row=0, column=0, pady=20)
         """
         self.combobox = ttk.Combobox(self)
         self.combobox.bind('<Button-1>', self.interface_changed)
@@ -20,16 +19,16 @@ class AppView(AbstractView):
         self.startButton.bind('<Button-1>', self.nextButton_clicked)
         self.startButton.grid(row=3, column=0)
         """
-        self.startButton = ttk.Button(self, text="Start")
+        self.startButton = ttk.Button(self, text="Start", style="Accent.TButton", width=50)
         self.startButton.bind('<Button-1>', self.interface_window)
-        self.startButton.grid(row=0, column=0)
+        self.startButton.grid(row=1, column=0, pady=5)
 
 
-        reports_button = ttk.Button(self, text='Reports')
-        reports_button.grid(row=1, column=0)
+        reports_button = ttk.Button(self, text='Reports', width=50)
+        reports_button.grid(row=2, column=0, pady=5)
         
-        quit_button = ttk.Button(self, text='Quit')
-        quit_button.grid(row=2, column=0)
+        quit_button = ttk.Button(self, text='Quit', width=50)
+        quit_button.grid(row=3, column=0, pady=5)
 
         self.popup = None
         self.controller = None
@@ -38,16 +37,16 @@ class AppView(AbstractView):
         if self.popup:
             self.popup.destroy
         self.popup = Toplevel()
-        self.popup.geometry("300x400")
 
-        ttk.Label(self.popup, text='Select an interface to start').grid(row=0,column=0)
-        self.combobox = ttk.Combobox(self.popup)
+        ttk.Label(self.popup, text='Select an interface to start', font=(25)).grid(row=0,column=0, pady=20, padx=20)
+        
+        self.combobox = ttk.Combobox(self.popup, width=25)
         self.combobox.bind('<Button-1>', self.interface_changed)
-        self.combobox.grid(row=1, column=0)
+        self.combobox.grid(row=1, column=0, padx=10)
 
         self.startButton = ttk.Button(self.popup, text="Continue", style="Accent.TButton")
         self.startButton.bind('<Button-1>', self.nextButton_clicked)
-        self.startButton.grid(row=2, column=0)
+        self.startButton.grid(row=2, column=0, pady=10, padx=10, sticky='EW')
 
     #-----EVENTS-------:
     def interface_changed(self, event):

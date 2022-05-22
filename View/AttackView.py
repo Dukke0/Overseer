@@ -42,7 +42,7 @@ class AttackView(AbstractView):
             while t1 - t0 < 1:
                 t1 = time.time()
             t0 = time.time()"""
-        self.controller.attack_plan.attack_list = TestAttack
+        #self.controller.attack_plan.attack_list = TestAttack
         for path in self.controller.attack_target():
             
             self.parent.update()
