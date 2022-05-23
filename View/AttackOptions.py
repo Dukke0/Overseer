@@ -13,7 +13,7 @@ class TestOptions(Toplevel):
         super().__init__(parent)
 
         self.parent = parent
-        self.label = ttk.Label(self, text='Available attacks').grid(row=0, column=0)
+        self.label = ttk.Label(self, text='Available attacks',  font=(25)).grid(row=0, column=0, pady=10)
         self.options = list()
     
     def change(self, n):
@@ -27,10 +27,12 @@ class TestOptions(Toplevel):
         self.options.clear()
         for idx, a in enumerate(attack_list):
             self.create_option(a, idx)
+        self.accept_btn = ttk.Button(self, text='Accept', style="Accent.TButton", width=10)
+        self.accept_btn.grid(row=len(attack_list) + 2, column=0, pady=10)
 
     def create_option(self, option: AbstractAttack, idx: int):
         cb = ttk.Checkbutton(self, text='Option ' + option.attack_name(), command=partial(self.change, idx))
-        cb.state(['!selected'])
-        cb.grid(row=idx+1, column=0)
+        cb.state(['!alternate'])
+        cb.grid(row=idx+1, column=0, sticky='W', pady=5, padx=10)
         self.options.append((cb, option))
 

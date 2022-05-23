@@ -30,7 +30,7 @@ class Interface():
         
         process = sb.Popen(cmd, stdout=PIPE)
         time.sleep(self.__scan_time)
-        process.terminate()
+        process.kill()
      
     def get_networks(self) -> list():
         return utl.parse_networks_file(utl.wifi_file + '-01.csv')

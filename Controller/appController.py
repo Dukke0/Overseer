@@ -124,8 +124,18 @@ class AppController:
     def remove_attack_from_plan(self, attack: AbstractAttack) -> None:
         self.attack_plan.remove_attack(attack)
 
-    def get_target_info(self) -> dict():
+    def get_target_info(self) -> dict:
         '''
         Function that returns target's info in a dictionary form
         '''
         return vars(self.target)
+
+    def get_target_info_as_string(self) -> str:
+        try:
+            dic_info = self.get_target_info()
+            string_info = ""
+            for key, val in enumerate(dic_info):
+                string_info += str(key) + " " + str(val) + " "
+            return string_info
+        except:
+            return 'Uknown'

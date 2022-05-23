@@ -1,3 +1,4 @@
+import sys
 from Model.Attacks.AbstractAttack import AbstractAttack
 import subprocess as sb
 
@@ -19,9 +20,11 @@ class WPSBruteForceAttack(AbstractAttack):
             '--channel', str(kwargs['target'].channel), 
             '-v', '4'] #verbose lvl 2
 
-        result = sb.Popen(cmd, stdout=sb.PIPE, universal_newlines=True)
+        result = sb.Popen(cmd, stdout=sb.PIPE, bufsize=1, universal_newlines=True)
+        sys.stdout.flush()
 
         for l in iter(result.stdout.readline, ""):
+            sys.stdout.flush()
             yield l
 
         result.stdout.close()
@@ -45,13 +48,14 @@ class PixieDustAttack(AbstractAttack):
             'bully',
             kwargs['interface'].monitor,
             '-b', kwargs['target'].bssid,
-            '--channel', kwargs['target'].channel, 
+            '--channel', str(kwargs['target'].channel), 
             '-d', #pixie dust
-            '-v', '4'] #verbose lvl 2
+            '-v', '2'] #verbose lvl 2
 
-        result = sb.Popen(cmd, stdout=sb.PIPE, universal_newlines=True)
+        result = sb.Popen(cmd, stdout=sb.PIPE,  universal_newlines=True)
 
         for l in iter(result.stdout.readline, ""):
+            #if "[Pixie-Dust] WPS pin not found" in l: 
             yield l
 
         result.stdout.close()

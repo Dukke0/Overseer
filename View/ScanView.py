@@ -1,9 +1,11 @@
+from sndhdr import whathdr
 from tkinter import NORMAL, DISABLED, Toplevel, ttk
 import tkinter as tk
 from tkinter.messagebox import showerror
 from View.View import AbstractView
 from View.AttackOptions import TestOptions
 from View.AttackView import AttackView
+import View.AppView
 import time
 import tkinter.font as tkFont
 
@@ -30,6 +32,10 @@ class ScanView(AbstractView):
         self.scan_btn = ttk.Button(self, text="Scan networks", style="Accent.TButton")
         self.scan_btn.bind('<Button-1>', self.scan_btn_clicked)
         self.scan_btn.grid(row=2, column=1, sticky='E')
+
+        self.scan_btn = ttk.Button(self, text="Back")
+        self.scan_btn.bind('<Button-1>', self.go_back)
+        self.scan_btn.grid(row=2, column=0, sticky='S')
         
         # NETWORK LIST WITH SCROLLBAR:
         self.tv = self.create_treeview(r=0,c=1)
@@ -127,7 +133,7 @@ class ScanView(AbstractView):
 
     def scan_btn_clicked(self, event) -> None:
         networks = self.controller.get_networks()
-
+        # TODO manage error in controller
         for n in networks:
             parsed_net = ['-' if not i.strip() else i for i in n]
             self.tv.insert('', tk.END, values=tuple(parsed_net))
@@ -136,6 +142,9 @@ class ScanView(AbstractView):
                 col_w = tkFont.Font().measure(val)
                 if self.tv.column(self.columns[ix],width=None)<col_w:
                     self.tv.column(self.columns[ix], width=col_w)
+
+    def go_back(self, event):
+        self.controller.change_view(View.AppView.AppView)
             
     # -- FUNCTIONS ---
 

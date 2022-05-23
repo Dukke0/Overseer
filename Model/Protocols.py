@@ -2,6 +2,7 @@
 from abc import ABC, abstractmethod
 from Model.Attacks.PassCrack import BruteForceAttack, DictionaryAttack
 from Model.Attacks.DeauthAttack import DeauthAttack
+from Model.Attacks.WepAttack import WEPAllInAttack
 from Model.Attacks.WpsAttacks import PixieDustAttack, WPSBruteForceAttack
 
 # TODO change abstract protocol 
@@ -14,8 +15,7 @@ class AbstractProtocol(ABC):
         return cls.__attacks_list
 
 class WEP(AbstractProtocol):
-    
-    __attacks_list = list()
+    __attacks_list = [WEPAllInAttack]
 
     @classmethod
     def attacks_list(cls) -> list:
