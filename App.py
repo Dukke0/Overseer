@@ -23,7 +23,7 @@ class App(tk.Tk):
         sv_ttk.use_light_theme()
         #sv_ttk.use_dark_theme()
 
-        AppController(self, AttackView)
+        AppController(self, ScanView)
 
         
 

@@ -1,7 +1,7 @@
-from sndhdr import whathdr
 from tkinter import NORMAL, DISABLED, Toplevel, ttk
 import tkinter as tk
 from tkinter.messagebox import showerror
+
 from View.View import AbstractView
 from View.AttackOptions import TestOptions
 from View.AttackView import AttackView
@@ -23,10 +23,14 @@ class ScanView(AbstractView):
         self.tv = None
         # SIDE BUTTONS
         self.start_test_btn = ttk.Button(self, text="Start Testing", state=DISABLED, style="Accent.TButton")
-        self.start_test_btn.grid(row=0, column=0, sticky='N', padx=10)
+        self.start_test_btn.grid(row=0, column=0, sticky='NWE', padx=10)
 
         self.config_test_btn = ttk.Button(self, text="Test Options", state=DISABLED, style="Accent.TButton")
-        self.config_test_btn.grid(row=0, column=0, sticky='N', pady='40', padx=10)
+        self.config_test_btn.grid(row=0, column=0, sticky='NWE', pady='40', padx=10)
+
+        self.tools_btn = ttk.Button(self, text="Other tools", style="Accent.TButton")
+        self.tools_btn.bind('<Button-1>', self.open_tools)
+        self.tools_btn.grid(row=0, column=0, sticky='NWE', pady='80', padx=10)
 
         # SCAN BUTTON
         self.scan_btn = ttk.Button(self, text="Scan networks", style="Accent.TButton")
@@ -44,8 +48,10 @@ class ScanView(AbstractView):
         # PROGRESS BAR
         self.scan_progress = ttk.Progressbar(self, orient=tk.HORIZONTAL,
                                             length=200, mode='indeterminate')
+                    
 
         self.options_popup = None
+        self.tools_popup = None
         self.target_properties = None
         self.controller = None
 
@@ -74,6 +80,23 @@ class ScanView(AbstractView):
         return tv
 
     # -- EVENTS ---
+
+
+    def open_tools(self, event) -> None:
+        self.tools_popup = Toplevel()
+        self.wordlist_btn = ttk.Button(self.tools_popup, text='Create Wordlist', style="Accent.TButton")
+        self.wordlist_btn.grid(row=1,column=0, pady=10)
+        self.wordlist_btn.bind('<Button-1>', self.create_dict)
+
+        self.word_info =ttk.Label(self.tools_popup, text='Enter key words, separated by coma.')
+        self.word_info.grid(row=0, column=0, columnspan=2, pady=10)
+
+        self.entry_words = ttk.Entry(self.tools_popup)  
+        self.entry_words.grid(row=1, column=1, padx=10)
+    
+    def create_dict(self, event) -> None:
+        self.controller.create_wordlist(self.entry_words.get())
+                
 
     def net_list_selected(self, event) -> None:
         currItem = self.tv.focus()

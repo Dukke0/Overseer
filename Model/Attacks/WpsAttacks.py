@@ -21,10 +21,8 @@ class WPSBruteForceAttack(AbstractAttack):
             '-v', '4'] #verbose lvl 2
 
         result = sb.Popen(cmd, stdout=sb.PIPE, bufsize=1, universal_newlines=True)
-        sys.stdout.flush()
 
         for l in iter(result.stdout.readline, ""):
-            sys.stdout.flush()
             yield l
 
         result.stdout.close()

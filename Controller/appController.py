@@ -139,3 +139,10 @@ class AppController:
             return string_info
         except:
             return 'Uknown'
+    
+    def create_wordlist(self, keywords):
+        try:
+            utl.WordListCreator.create_combinations(keywords=keywords)
+        except AppException as ex:
+            self.view.show_error(ex)
+        

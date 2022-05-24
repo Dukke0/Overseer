@@ -3,11 +3,16 @@ import pandas as pd
 import os, glob
 import time
 from typing import Union
+import itertools
+import subprocess as sb
+
+from Controller.appException import AppException
 
 #Folder and files
 folder_name = "temp"
 wifi_file = folder_name + "/scan"
 target_dump = folder_name + "/target_dump" 
+
 
 def parse_networks_file(filename: str) -> list():
     '''
@@ -57,4 +62,44 @@ def delete_temp() -> Union[int, None]:
         os.rmdir(current_path + '/temp')
     except:
         return 1
+
+class WordListCreator():
+    __comb_path = "Model/files/comb_path.txt"
+    __wordlist_path = "Model/files/wordlist.txt"
+
+    @classmethod
+    def parse_data(cls, keywords):
+        title = keywords.title()
+        nospaces = title.replace(" ", "")
+        keywords_list = nospaces.split(",")
+        return keywords_list
+
+    @classmethod
+    def create_combinations(cls, keywords: str):
+        open(cls.__comb_path, 'w').close()
+        parsed_keys = cls.parse_data(keywords=keywords)
+
+        if len(parsed_keys) > 5:
+            raise AppException('The number of words to create a wordlist has exceeded its maximum (max 5)')
+        elif parsed_keys == ['']:
+            raise AppException('Please enter a word between 1 and 5 words')
+        print(parsed_keys, len(parsed_keys))
+
+        for i in range(1, len(parsed_keys)+1):
+            l = list(itertools.permutations(parsed_keys, i))
+            together = ["".join(p) for p in l]
+            without_large_values = [x for x in together if len(x) < 20]
+            with open(cls.__comb_path, mode='a', encoding='utf-8') as f:
+                f.write('\n'.join(without_large_values))
+
+        cls.johnCombination()
+
+    @classmethod
+    def johnCombination(cls):
+        cmd = ['john', '--rules=jumbo', '--stdout', '--wordlist='+cls.__comb_path, '-min-len=7', '-max-len=14']
+        with open(cls.__wordlist_path, "w") as outfile:
+            sb.run(cmd, stdout=outfile)
+
+
+
 

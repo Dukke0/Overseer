@@ -14,7 +14,7 @@ class BruteForceAttack(AbstractAttack):
         pass
 
 class DictionaryAttack(AbstractAttack):
-    __path_dict = 'Model/files/handshake'
+    __path_dict = 'Model/files/wordlist.txt' #TODO make default wordlist
 
     @classmethod
     def attack_name(cls) -> str:
