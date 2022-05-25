@@ -1,6 +1,5 @@
 
 import tkinter as tk
-import customtkinter as ctk
 from Controller.appController import AppController
 from View.AppView import AppView
 from View.AttackView import AttackView

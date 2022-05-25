@@ -1,6 +1,7 @@
 from tkinter import NORMAL, DISABLED, Toplevel, ttk
 import tkinter as tk
 from tkinter.messagebox import showerror
+from turtle import width
 
 from View.View import AbstractView
 from View.AttackOptions import TestOptions
@@ -84,8 +85,10 @@ class ScanView(AbstractView):
 
     def open_tools(self, event) -> None:
         self.tools_popup = Toplevel()
-        self.wordlist_btn = ttk.Button(self.tools_popup, text='Create Wordlist', style="Accent.TButton")
-        self.wordlist_btn.grid(row=1,column=0, pady=10)
+        
+        # WORDLIST
+        self.wordlist_btn = ttk.Button(self.tools_popup, text='Create Wordlist', style="Accent.TButton",  width=15)
+        self.wordlist_btn.grid(row=1,column=0, pady=10, padx=10,)
         self.wordlist_btn.bind('<Button-1>', self.create_dict)
 
         self.word_info =ttk.Label(self.tools_popup, text='Enter key words, separated by coma.')
@@ -93,7 +96,25 @@ class ScanView(AbstractView):
 
         self.entry_words = ttk.Entry(self.tools_popup)  
         self.entry_words.grid(row=1, column=1, padx=10)
-    
+
+        # MAC CHANGE:
+        
+        self.generate_mac_btn = ttk.Button(self.tools_popup, text='Generate MAC', style="Accent.TButton", width=15)
+        self.generate_mac_btn.grid(row=3, column=0, pady=10, padx=10, sticky='W')
+        self.generate_mac_btn.bind('<Button-1>', self.change_mac)
+        
+        self.mac_info = ttk.Label(self.tools_popup, text='Generate a new MAC or type your own')
+        self.mac_info.grid(row=2, column=0, columnspan=2, padx=10, pady=10)
+        
+        self.mac_entry = ttk.Entry(self.tools_popup)
+        self.mac_entry.grid(row=3, column=1, padx=10)
+
+    def change_mac(self, event):
+        print(self.mac_entry.get())
+        self.controller.change_mac(mac=self.mac_entry.get())
+
+
+
     def create_dict(self, event) -> None:
         self.controller.create_wordlist(self.entry_words.get())
                 

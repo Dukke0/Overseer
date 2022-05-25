@@ -145,4 +145,19 @@ class AppController:
             utl.WordListCreator.create_combinations(keywords=keywords)
         except AppException as ex:
             self.view.show_error(ex)
+    
+    def change_mac(self, mac=None):
+        try:
+
+            mac = mac.replace("-", ":")
+            if not utl.MACChanger.validate_mac(mac):
+                self.view.show_error(ex)
+                return 
+            #TODO return new mac address
+            utl.MACChanger.change_mac(mac=mac)
+                    
+        except AppException as ex:
+            self.view.show_error(ex)
+        except Exception as ex:
+            self.app.destroy()
         

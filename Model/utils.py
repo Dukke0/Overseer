@@ -63,6 +63,32 @@ def delete_temp() -> Union[int, None]:
     except:
         return 1
 
+class MACChanger():
+
+    @classmethod
+    def change_mac(cls, mac=None):
+        cmd = ['sudo',
+               'macchanger']
+
+        if not mac: cmd.append('--random')
+        else: cmd.append('--mac=' + mac)
+
+        sb.run(cmd, sb.PIPE)
+    
+    @classmethod
+    def validate_mac(cls, mac, separator=":"):
+
+        if len(mac) != (12 + 5):
+            return False
+
+        for i in range(5):
+            if mac[i+2] != separator:
+                return False
+
+        return True
+                    
+        
+
 class WordListCreator():
     __comb_path = "Model/files/comb_path.txt"
     __wordlist_path = "Model/files/wordlist.txt"
