@@ -1,11 +1,13 @@
 
 import tkinter as tk
 from Controller.appController import AppController
+from Model.Target import Target
 from View.AppView import AppView
 from View.AttackView import AttackView
 from View.ScanView import ScanView
 from Model.Report import Report
 import sv_ttk
+from Model.Attacks.DeauthAttack import DeauthAttack, TestAttack
 
 class App(tk.Tk):
 
@@ -27,7 +29,13 @@ class App(tk.Tk):
         
 
 if __name__ == '__main__':
-    #r = Report()
-    #r.to_txt()
-    app = App()
-    app.mainloop()
+
+    t = Target(bssid = '00:00:00:00:00:00', essid = 'eduroam', protocol = 'WPA2', channel = 6)
+    r = Report(t)
+    r.write_attack_result(DeauthAttack, True, 'A')
+    r.write_attack_result(TestAttack, True, 'A')
+    r.write_attack_result(DeauthAttack, False, 'A')
+
+    r.to_txt()
+    #app = App()
+    #app.mainloop()
