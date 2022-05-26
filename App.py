@@ -37,5 +37,6 @@ if __name__ == '__main__':
     r.write_attack_result(DeauthAttack, False, 'A')
 
     r.to_txt()
+    r.to_json()
     #app = App()
     #app.mainloop()
