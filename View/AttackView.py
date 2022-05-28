@@ -27,30 +27,39 @@ class AttackView(AbstractView):
         self.info_box.grid(column=box_c, row=box_r, sticky='nsew', in_=self, pady=10)
         vsb.grid(column=box_c+1, row=box_r, sticky='ns', in_=self)
 
-        self.stop_btn = ttk.Button(self, text="Back")
-        self.stop_btn.bind('<Button-1>', self.go_back)
-        self.stop_btn.grid(row=0, column=0, sticky='w')
+        self.back_btn = ttk.Button(self, text="Back")
+        self.back_btn.bind('<Button-1>', self.go_back)
+        self.back_btn.grid(row=0, column=0, sticky='w')
 
-
-        self.stop_btn = ttk.Button(self, text="Stop", width=10)
-        self.stop_btn.bind('<Button-1>', self.test_attack)
+        self.stop_btn = ttk.Button(self, text="Stop", width=10, state="disabled")
+        self.stop_btn.bind('<Button-1>', self.stop_attack)
         self.stop_btn.grid(row=box_r + 2, column=0, sticky='w')
 
         self.check_report_btn = ttk.Button(self, text='Check report')
         self.check_report_btn.bind('<Button-1>', self.open_report)
         self.check_report_btn.grid(row=box_r + 2, column=0, sticky='e', padx=(0,120))
 
-        self.check_report_btn = ttk.Button(self, text='Start', style="Accent.TButton", width=10)
-        self.check_report_btn.bind('<Button-1>', self.test_attack)
-        self.check_report_btn.grid(row=box_r + 2, column=0, sticky='e')
+        self.start_btn = ttk.Button(self, text='Start', style="Accent.TButton", width=10)
+        self.start_btn.bind('<Button-1>', self.test_attack)
+        self.start_btn.grid(row=box_r + 2, column=0, sticky='e')
 
     def go_back(self, event):
         self.controller.change_view(View.ScanView.ScanView)
     
+    def stop_attack(self, event):
+        self.start_btn["state"] = "normal"
+        self.check_report_btn["state"] = "normal"
+        self.stop_btn["state"] = "disabled"
+
+
     def open_report(self, event):
-        pass
+        self.controller.check_report()
 
     def test_attack(self, event):
+        self.start_btn["state"] = "disabled"
+        self.check_report_btn["state"] = "disabled"
+        self.stop_btn["state"] = "normal"
+
         #t0 = time.time()
         """t1= time.time()
             while t1 - t0 < 1:
@@ -61,6 +70,8 @@ class AttackView(AbstractView):
 
             self.parent.update()
             self.info_box.insert('end', path)
+            self.info_box.see('end')
+
             
 
     def show_error():

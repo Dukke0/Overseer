@@ -10,9 +10,8 @@ class DeauthAttack(AbstractAttack):
         return 'Deauthentication'
 
     @classmethod
-    def execute_attack(cls, target=None) -> bool:
-        cmd = ['sudo',
-            'tshark',
+    def execute_attack(cls, q, kwargs) -> bool:
+        cmd = ['tshark',
             '-r', target_dump + '-01.cap',
             '-Y', 'wlan.rsn.capabilities',
             '-T', 'fields',
@@ -24,12 +23,6 @@ class DeauthAttack(AbstractAttack):
         else:
             yield 'Network is not vulnerable to deauthentication attacks.'
 
-        result.stdout.close()
-        return_code = result.wait()
-
-        if return_code:
-            raise sb.CalledProcessError(return_code, cmd)
-
 class TestAttack(AbstractAttack):
 
     @classmethod
@@ -37,5 +30,10 @@ class TestAttack(AbstractAttack):
         return 'test'
 
     @classmethod
-    def execute_attack(cls, target=None) -> bool:
-        pass
+    def execute_attack(cls, q, kwargs) -> bool:
+        cmd = ['airodump-ng', 'wlan0mon']
+        p = sb.Popen(["stdbuf","-i0","-o0","-e0"]  + cmd, stdout=sb.PIPE, text = True)
+        for line in p.stdout:
+            q.put(line)
+        p.kill()
+        

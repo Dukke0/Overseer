@@ -8,11 +8,12 @@ from View.ScanView import ScanView
 from Model.Report import Report
 import sv_ttk
 from Model.Attacks.DeauthAttack import DeauthAttack, TestAttack
+from threading import Thread
 
 class App(tk.Tk):
 
     def __init__(self):
-
+        "sudo -E "
         super().__init__()
 
         self.title('Wifipy')
@@ -29,7 +30,7 @@ class App(tk.Tk):
         
 
 if __name__ == '__main__':
-
+    """
     t = Target(bssid = '00:00:00:00:00:00', essid = 'eduroam', protocol = 'WPA2', channel = 6)
     r = Report(t)
     r.write_attack_result(DeauthAttack, True, 'A')
@@ -38,5 +39,6 @@ if __name__ == '__main__':
 
     r.to_txt()
     r.to_json()
-    #app = App()
-    #app.mainloop()
+    """
+    app = App()
+    app.mainloop()

@@ -1,5 +1,7 @@
+import queue
+import threading
 from typing import Union
-from Model.Attacks.AbstractAttack import AbstractAttack
+from Model.Attacks.AbstractAttack import AbstractAttack, AttackResultInfo
 from Model.Target import Target
 
 class AttackPlan():
@@ -33,9 +35,16 @@ class AttackPlan():
         self.__target = Target
     
     def execute_plan(self, **kwargs) -> list():
-        generators_list = list()
+        print(self.__attack_list)
+        q = queue.Queue()
         for attack in self.__attack_list:
-            generators_list.append(attack.execute_attack(**kwargs))
-        return generators_list
-
- 
+            threading.Thread(target=attack.execute_attack, args=(q, kwargs), daemon=True).start()
+            while True:
+                try:
+                    l = q.get(True, 40)
+                    yield l
+                    if type(l) == AttackResultInfo:
+                        break
+                except queue.Empty:
+                    break
+        

@@ -1,7 +1,7 @@
 #from View.AppView import AppView
 from Controller.appException import AppException
 from Model.AttackPlan import AttackPlan
-from Model.Attacks.AbstractAttack import AbstractAttack
+from Model.Attacks.AbstractAttack import AbstractAttack, AttackResultInfo
 from Model.Protocols import OPEN, WPA, AbstractProtocol
 from Model.Target import Target
 from Model.interface import Interface
@@ -10,6 +10,7 @@ from View.ScanView import ScanView
 from Model.Report import Report
 import Model.utils as utl
 import logging
+import traceback
 
 class AppController:
 
@@ -18,7 +19,7 @@ class AppController:
         self.interface = Interface()
         self.target = Target()
         self.attack_plan = AttackPlan(target=self.target)
-        self.report = Report()
+        self.report = Report(self.target)
         self.view = None
         self.change_view(firstView) # Only one view
 
@@ -77,9 +78,12 @@ class AppController:
     def attack_target(self) -> str:
         try:
             #self.interface.sniff_target(self.target)
-            for generator in self.attack_plan.execute_plan(target=self.target, interface=self.interface):
-                for path in generator:
+            for path in self.attack_plan.execute_plan(target=self.target, interface=self.interface):
+                if type(path) == AttackResultInfo:
+                    self.report.report_results_from(path)
+                else:
                     yield path
+
         except StopIteration as si:
             #self.report.communicate_result(path)
             pass
@@ -87,6 +91,7 @@ class AppController:
             print(e)
             yield 'error'
             #self.clean_close()
+            traceback.print_exc()
 
     def get_scan_time(self) -> int:
         return self.interface.get_scan_time()
@@ -106,7 +111,7 @@ class AppController:
         self.target.channel = channel
         protocol = protocol.strip()
 
-        if protocol == 'WPA' or protocol == 'WPA2' or protocol == 'WPA/WPA2':
+        if protocol == 'WPA' or protocol == 'WPA2' or protocol == 'WPA/WPA2' or protocol =='WPA WPA2':
             self.target.protocol = WPA
         elif protocol == 'OPN':
             self.target.protocol = OPEN
@@ -160,4 +165,14 @@ class AppController:
             self.view.show_error(ex)
         except Exception as ex:
             self.app.destroy()
+    
+    def check_report(self):
+        try:
+            self.report.to_txt()
+            self.report.to_json()
+        except AppException as ex:
+            self.view.show_error(ex)
+        except Exception as ex:
+            self.app.destroy()
+            traceback.print_exc()
         
