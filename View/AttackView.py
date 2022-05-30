@@ -83,7 +83,7 @@ class AttackView(AbstractView):
     
     def create_extra_window(self, name):
         windows = len(self.extra_windows)
-        if len(windows) < 2: mod = 2
+        if windows < 2: mod = 2
         else: mod = -2
         x = self.winfo_x() + 200*(windows % mod)
         y = self.winfo_y() + 200*(windows+1%mod)

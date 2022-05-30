@@ -41,8 +41,8 @@ class EvilTwin(AbstractAttack):
 
     @classmethod
     def create_AP(cls, q, target, interface):
-        cmd = ['airbase-ng', '-e', target.essid, '-c', str(target.channel), interface.monitor]
-        #cmd = ['airbase-ng', '-e', 'Pentesting-2.4ghz', '-c', '6', 'wlan0mon']
+        #cmd = ['airbase-ng', '-e', target.essid, '-c', str(target.channel), interface.monitor]
+        cmd = ['airbase-ng', '-e', 'Pentesting-2.4ghz', '-c', '6', 'wlan0mon']
         p = sb.Popen(["stdbuf","-i0","-o0","-e0"] + cmd, stdout=sb.PIPE, text=True)
 
         for line in p.stdout:
