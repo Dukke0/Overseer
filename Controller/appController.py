@@ -1,7 +1,10 @@
 #from View.AppView import AppView
+import queue
+from django.views import View
 from Controller.appException import AppException
 from Model.AttackPlan import AttackPlan
 from Model.Attacks.AbstractAttack import AbstractAttack, AttackResultInfo
+from Model.Attacks.EvilTwin import EvilTwin
 from Model.Protocols import OPEN, WPA, AbstractProtocol
 from Model.Target import Target
 from Model.interface import Interface
@@ -9,12 +12,11 @@ from View.AppView import AppView
 from View.ScanView import ScanView
 from Model.Report import Report
 import Model.utils as utl
-import logging
 import traceback
 
 class AppController:
 
-    def __init__(self, app, firstView):
+    def __init__(self, app, firstView : View):
         self.app = app
         self.interface = Interface()
         self.target = Target()
@@ -78,6 +80,10 @@ class AppController:
     def attack_target(self) -> str:
         try:
             #self.interface.sniff_target(self.target)
+            if EvilTwin in self.get_plan():
+                for n in EvilTwin.PROCESS_NAMES:
+                    self.view.create_extra_window(name=n)
+
             for path in self.attack_plan.execute_plan(target=self.target, interface=self.interface):
                 if type(path) == AttackResultInfo:
                     self.report.report_results_from(path)

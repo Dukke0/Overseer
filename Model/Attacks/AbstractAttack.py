@@ -2,7 +2,8 @@
 from abc import ABC, abstractmethod
 
 class AbstractAttack(ABC):
-
+    TIMEOUT = 40
+    
     @classmethod
     @abstractmethod
     def attack_name(cls) -> str:
