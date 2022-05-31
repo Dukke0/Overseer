@@ -62,13 +62,15 @@ class AttackView(AbstractView):
         self.start_btn["state"] = "disabled"
         self.check_report_btn["state"] = "disabled"
         self.stop_btn["state"] = "normal"
-
+        #for n in range(3):
+        #    self.create_extra_window('window' + str(n))
         #t0 = time.time()
         """t1= time.time()
             while t1 - t0 < 1:
                 t1 = time.time()
             t0 = time.time()"""
-        self.controller.attack_plan.attack_list = EvilTwin
+        #self.controller.attack_plan.attack_list = EvilTwin
+        
         for path in self.controller.attack_target():
             if len(self.extra_windows) != 0:
                 print(path[0], path[1])
@@ -79,11 +81,11 @@ class AttackView(AbstractView):
                 self.info_box.insert('end', path)
                 self.info_box.see('end')
                 self.parent.update()
+        
 
-    
     def create_extra_window(self, name):
         windows = len(self.extra_windows)
-        if windows < 2: mod = 2
+        if windows < 1: mod = 2
         else: mod = -2
         x = self.winfo_x() + 200*(windows % mod)
         y = self.winfo_y() + 200*(windows+1%mod)
