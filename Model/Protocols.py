@@ -24,7 +24,7 @@ class WEP(AbstractProtocol):
 
 class WPA(AbstractProtocol):
 
-    __attacks_list = [DeauthAttack, BruteForceAttack, DictionaryAttack, 
+    __attacks_list = [DeauthAttack, DictionaryAttack, 
                       WPSBruteForceAttack, PixieDustAttack, EvilTwin]
 
     @classmethod
@@ -33,7 +33,7 @@ class WPA(AbstractProtocol):
 
 class OPEN(AbstractProtocol):
 
-    __attacks_list = list()
+    __attacks_list = [EvilTwin]
 
     @classmethod
     def attacks_list(cls) -> list:

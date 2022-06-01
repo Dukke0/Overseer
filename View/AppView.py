@@ -1,12 +1,13 @@
 from tkinter import Toplevel, ttk
 import tkinter as tk
 from tkinter.messagebox import showerror
+from View.ReportView import ReportListView
 from View.View import AbstractView
 
 class AppView(AbstractView):
 
-    def __init__(self, parent): 
-        super().__init__(parent)
+    def __init__(self, parent, controller=None): 
+        super().__init__(parent, controller)
 
         self.label = ttk.Label(self, text='Welcome to Wifipy', font=(25))
         self.label.grid(row=0, column=0, pady=20)
@@ -25,6 +26,7 @@ class AppView(AbstractView):
 
 
         reports_button = ttk.Button(self, text='Reports', width=50)
+        reports_button.bind('<Button-1>', self.report_button_clicked)
         reports_button.grid(row=2, column=0, pady=5)
         
         quit_button = ttk.Button(self, text='Quit', width=50)
@@ -61,6 +63,9 @@ class AppView(AbstractView):
                 ifs_name = info[:info.find(':')]
                 self.controller.selected_interface(ifs_name)
                 self.popup.destroy()
+    
+    def report_button_clicked(self, event):
+        self.controller.change_view(ReportListView)
     
 
     def show_error(self, ex):

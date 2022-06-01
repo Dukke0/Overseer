@@ -1,6 +1,8 @@
 
+import sqlite3
 import tkinter as tk
 from Controller.appController import AppController
+from Database import Database
 from Model.Target import Target
 from View.AppView import AppView
 from View.AttackView import AttackView
@@ -25,9 +27,8 @@ class App(tk.Tk):
         sv_ttk.use_light_theme()
         #sv_ttk.use_dark_theme()
 
-        AppController(self, AttackView)
+        AppController(self, AppView)
 
-        
 
 if __name__ == '__main__':
     """
@@ -42,3 +43,32 @@ if __name__ == '__main__':
     """
     app = App()
     app.mainloop()
+    """
+    db = Database("database.db")
+    with db.conn:
+        report = ('Report 1', 'Hoy', 'some bssid', 'some essid', 'WPA2', 'channel')
+        report_id = db.create_report(report)
+
+        attack_1 = ('Attack 1', 'easy lol', 'High', report_id)
+        attack_2 = ('Attack 2', 'SO HARD', 'None', report_id)
+
+        db.create_attack(attack_1)
+        db.create_attack(attack_2)
+
+        cur = db.conn.cursor()
+        cur.execute("SELECT * FROM Report")
+
+        rows = cur.fetchall()
+
+        for row in rows:
+            print(row)
+
+        cur = db.conn.cursor()
+        cur.execute("SELECT * FROM Attack")
+
+        rows = cur.fetchall()
+
+        for row in rows:
+            print(row)
+    """
+

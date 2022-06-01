@@ -110,10 +110,7 @@ class ScanView(AbstractView):
         self.mac_entry.grid(row=3, column=1, padx=10)
 
     def change_mac(self, event):
-        print(self.mac_entry.get())
         self.controller.change_mac(mac=self.mac_entry.get())
-
-
 
     def create_dict(self, event) -> None:
         self.controller.create_wordlist(self.entry_words.get())

@@ -6,16 +6,30 @@ from Model.Target import Target
 import json
 import datetime
 import os.path
+from Database import Database
 
 class Report():
 
-    def __init__(self, target, filename="Report"):
+    def __init__(self, target, database: Database, filename="Report"):
         
         self.filename = filename
         self.failed_attacks = 0
         self.succesful_attacks = 0
         self.attacks_results = list()
         self.target = target
+        self.db = database
+    
+    def save_report(self):
+        with self.db.conn:
+            report = ('Report', 'Hoy', self.target.bssid, self.target.essid,
+            self.target.protocol, self.target.channel)
+
+            report_id = self.db.create_report(report)
+            
+            for r in self.attacks_results:
+                attack = (r['attack'], r['info'], 'High', report_id)
+                self.db.create_attack(attack)
+
     
     def report_date(self) -> str:
         e = datetime.datetime.now()
@@ -29,7 +43,7 @@ class Report():
     def report_results_from(self, results: AttackResultInfo):
         print('hello there')
         success = False
-        if results.risk != 'Not vulnerable':
+        if results.risk != 'None':
             success = True
         self.write_attack_result(attack=results.attack, success=success, messages=results.desc)
 

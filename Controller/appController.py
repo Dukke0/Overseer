@@ -1,6 +1,5 @@
 #from View.AppView import AppView
 import queue
-from django.views import View
 from Controller.appException import AppException
 from Model.AttackPlan import AttackPlan
 from Model.Attacks.AbstractAttack import AbstractAttack, AttackResultInfo
@@ -11,17 +10,20 @@ from Model.interface import Interface
 from View.AppView import AppView
 from View.ScanView import ScanView
 from Model.Report import Report
+from View.View import AbstractView
 import Model.utils as utl
 import traceback
+from Database import Database
 
 class AppController:
 
-    def __init__(self, app, firstView : View):
+    def __init__(self, app, firstView : AbstractView):
         self.app = app
         self.interface = Interface()
         self.target = Target()
         self.attack_plan = AttackPlan(target=self.target)
-        self.report = Report(self.target)
+        self.db = Database('database.db')
+        self.report = Report(self.target, database=self.db)
         self.view = None
         self.change_view(firstView) # Only one view
 
@@ -37,7 +39,7 @@ class AppController:
         if self.view != None:
             self.view.grid_forget()
             self.view.destroy()
-        self.view = viewClass(self.app)
+        self.view = viewClass(self.app, controller=self)
         self.view.grid(row=0, column=0, padx=10, pady=10)
         self.view.set_controller(self)
 
@@ -181,4 +183,7 @@ class AppController:
         except Exception as ex:
             self.app.destroy()
             traceback.print_exc()
-        
+    
+    def get_reports(self, filter=None):
+        return self.db.filter_reports(filter)
+
