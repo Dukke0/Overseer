@@ -22,6 +22,18 @@ class DictionaryAttack(AbstractAttack):
         return 'Dictionary attack'
     
     @classmethod
+    def description(cls, result: bool) -> str:
+        desc = ""
+        if result:
+            desc += "The password has been cracked easily, it is usually a bad indication that this application" 
+            + "can get your network password. Change your password as it is very weak. Tips: Use password longer than"
+            + " 8 characters, use uncommon words, don't put keywords that can be easily deduced (Your company name,"
+            + "your name, your age, etc...)\n"
+        else:
+            desc += "The application could not recover your password."
+        return desc
+
+    @classmethod
     def execute_attack(cls, q, kwargs):
         '''
         Attempts to crack the captured hash containing the password with a dictionary attack using the Aircrack tool 
@@ -38,6 +50,8 @@ class DictionaryAttack(AbstractAttack):
             target_dump + "-01.cap"]
 
         result = AttackResultInfo()
+        result.attack = cls.attack_name()
+
         p = sb.Popen(["stdbuf","-i0","-o0","-e0"] + cmd, stdout=sb.PIPE, text=True)
 
         for line in p.stdout:
@@ -50,11 +64,13 @@ class DictionaryAttack(AbstractAttack):
             if key_found != -1:
                 q.put(line[key_found:]) 
                 result.risk = 'High'
-                result.desc = 'It was easy LOL'
-                result.attack = cls
+                result.desc = cls.description(True)
                 q.put(result)
 
             elif line.find('KEY NOT FOUND') != -1:
                 q.put('KEY NOT FOUND')
+                result.risk = 'None'
+                result.desc = cls.description(True)
+                q.put(result)
 
         p.kill()

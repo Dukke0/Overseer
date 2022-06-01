@@ -122,7 +122,7 @@ class WordListCreator():
 
     @classmethod
     def johnCombination(cls):
-        cmd = ['john', '--rules=jumbo', '--stdout', '--wordlist='+cls.__comb_path, '-min-len=7', '-max-len=14']
+        cmd = ['john', '--rules=jumbo', '--stdout', '--wordlist='+cls.__comb_path, '-min-len=8', '-max-len=14']
         with open(cls.__wordlist_path, "w") as outfile:
             sb.run(cmd, stdout=outfile)
 

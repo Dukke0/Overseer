@@ -38,12 +38,14 @@ class AttackPlan():
     def execute_plan(self, **kwargs) -> list():
         q = queue.Queue()
         for attack in self.__attack_list:
+            q.put('Attempting attack: ' + attack.attack_name())
             threading.Thread(target=attack.execute_attack, args=(q, kwargs), daemon=True).start()
             while True:
                 try:
                     l = q.get(True, timeout=9999)
                     yield l
                     if type(l) == AttackResultInfo:
+                        yield "Attack done, getting results..."
                         break
                 except queue.Empty:
                     break
