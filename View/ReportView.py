@@ -22,16 +22,28 @@ class ReportListView(AbstractView):
         self.tv = self.create_treeview(r=0,c=0)
         #self.tv.bind('<<TreeviewSelect>>', self.net_list_selected)
         
+        self.popup_menu = tk.Menu(self, tearoff=0)
+        self.popup_menu.add_command(label='Read')
+        self.popup_menu.add_command(label='Export', command=self.export)
+        self.popup_menu.add_command(label='Delete')
+
+        self.tv.bind('<Button-3>', self.popup)
         self.back_btn = ttk.Button(self, text="Back")
         self.back_btn.bind('<Button-1>', self.go_back)
         self.back_btn.grid(row=2, column=0, sticky='w')   
 
         self.get_reports()     
     
+    def popup(self, event):
+        self.popup_menu.tk_popup(event.x_root, event.y_root, 0)
+    
+    def export(self):
+        pass
+
     # -- WIDGET CREATION ---
 
     def create_treeview(self, c, r) -> ttk.Treeview:
-        self.columns = ('Name', 'Date', 'Target')
+        self.columns = ('ID', 'Name', 'Date', 'BSSID','ESSID','Protcol','Channel')
         tv = ttk.Treeview(self, columns=self.columns, 
                             show='headings', height=10, selectmode='browse')
 
