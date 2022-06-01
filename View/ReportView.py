@@ -2,6 +2,7 @@
 from tkinter import NORMAL, DISABLED, Toplevel, ttk
 import tkinter as tk
 from tkinter.messagebox import showerror
+from tkinter import filedialog
 
 from View.View import AbstractView
 import View.AppView
@@ -16,29 +17,68 @@ class ReportListView(AbstractView):
         self.parent = parent
         parent.grid_rowconfigure(0, weight=1)
         parent.grid_columnconfigure(0, weight=1)
+        
+        title = ttk.Label(self, text="Reports", font=(tk.font.BOLD, 15))
+        title.grid(row=0, column=0, sticky='W', padx=20, pady=20)
 
         self.tv = None
         # NETWORK LIST WITH SCROLLBAR:
-        self.tv = self.create_treeview(r=0,c=0)
+
+        self.tv = self.create_treeview(r=1,c=0)
         #self.tv.bind('<<TreeviewSelect>>', self.net_list_selected)
-        
+
         self.popup_menu = tk.Menu(self, tearoff=0)
-        self.popup_menu.add_command(label='Read')
-        self.popup_menu.add_command(label='Export', command=self.export)
-        self.popup_menu.add_command(label='Delete')
+        self.popup_menu.add_command(label='View', command=self.read)
+        self.popup_menu.add_command(label='Export to json', command=self.export_json)
+        self.popup_menu.add_command(label='Export to txt', command=self.export_txt)
+        self.popup_menu.add_command(label='Delete', command=self.delete)
 
         self.tv.bind('<Button-3>', self.popup)
         self.back_btn = ttk.Button(self, text="Back")
         self.back_btn.bind('<Button-1>', self.go_back)
-        self.back_btn.grid(row=2, column=0, sticky='w')   
+        self.back_btn.grid(row=3, column=0, sticky='w', padx=(20,0))   
 
         self.get_reports()     
     
-    def popup(self, event):
-        self.popup_menu.tk_popup(event.x_root, event.y_root, 0)
-    
-    def export(self):
+    def read(self, event):
         pass
+
+    def delete(self, event):
+        pass
+    
+    def popup(self, event):
+        self.iid = self.tv.identify_row(event.y)
+        if self.iid:
+            # mouse pointer over item
+            self.tv.focus(self.iid)
+            self.tv.selection_set(self.iid)
+            self.popup_menu.tk_popup(event.x_root, event.y_root, 0)
+        else:
+            # mouse pointer not over item
+            # occurs when items do not fill frame
+            # no action required
+            pass
+
+    def export_json(self):
+        if self.iid:
+            currItem = self.tv.focus()
+            val = self.tv.item(currItem)['values']
+            files = [('JSON file', '*.json')]
+            file_path = filedialog.asksaveasfilename(filetypes = files)
+            self.controller.export_report(id=val[0], file_path=file_path, type='json')
+        else:
+            pass
+    
+    def export_txt(self):
+        if self.iid:
+            currItem = self.tv.focus()
+            val = self.tv.item(currItem)['values']
+            files = [('Text Document', '*.txt')]
+            file_path = filedialog.asksaveasfilename(filetypes = files)
+            self.controller.export_report(id=val[0], file_path=file_path, type='txt')
+        else:
+            pass
+
 
     # -- WIDGET CREATION ---
 
@@ -52,9 +92,9 @@ class ReportListView(AbstractView):
 
         tv.configure(yscrollcommand=vsb.set, xscrollcommand=hsb.set)
 
-        tv.grid(column=c, row=r, sticky='nsew', in_=self)
-        vsb.grid(column=c+1, row=r, sticky='ns', in_=self)
-        hsb.grid(column=c, row=r+1, sticky='ew', in_=self)
+        tv.grid(column=c, row=r, sticky='nsew', in_=self, padx=(20,0))
+        vsb.grid(column=c+1, row=r, sticky='ns', in_=self, padx=(0, 20))
+        hsb.grid(column=c, row=r+1, sticky='ew', in_=self, padx=(20,0), pady=(0,20))
 
         for i, col in enumerate(self.columns):
             tv.column(column=i, width=100)

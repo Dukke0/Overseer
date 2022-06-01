@@ -28,20 +28,21 @@ class App(tk.Tk):
         #sv_ttk.use_dark_theme()
 
         AppController(self, AppView)
+ 
 
 
 if __name__ == '__main__':
-    """
+
     t = Target(bssid = '00:00:00:00:00:00', essid = 'eduroam', protocol = 'WPA2', channel = 6)
-    r = Report(t)
+    r = Report(t, database= Database("database.db"))
+    """
     r.write_attack_result(DeauthAttack, True, 'A')
     r.write_attack_result(TestAttack, True, 'A')
     r.write_attack_result(DeauthAttack, False, 'A')
-
-    r.to_txt()
-    r.to_json()
+    r.save_report()
     """
     app = App()
+    
     app.mainloop()
     """
     db = Database("database.db")

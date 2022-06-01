@@ -187,3 +187,12 @@ class AppController:
     def get_reports(self, filter=None):
         return self.db.filter_reports(filter)
 
+    def export_report(self, id, file_path=None, type='json'):
+        try:
+            self.report.export_report(id=id, file_path=file_path, type=type)
+        except AppException as ex:
+            self.view.show_error(ex)
+        except Exception as ex:
+            self.app.destroy()
+            traceback.print_exc()            
+

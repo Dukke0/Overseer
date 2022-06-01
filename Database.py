@@ -105,6 +105,6 @@ class Database():
             c = self.conn.cursor()
             if not filter:
                 c.execute("SELECT * FROM Report")
-                return c.fetchmany(10)
+                return c.fetchmany(90)
 
             
