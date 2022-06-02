@@ -7,9 +7,10 @@ from Model.Target import Target
 
 class AttackPlan():
 
-    def __init__(self, target=None, attack_list=list()):
+    def __init__(self, target=None, attack_list=list(), controller=None):
         self.__target = target
         self.__attack_list = attack_list
+        self.controller = controller
 
     @property
     def attack_list(self) -> list:
@@ -40,9 +41,10 @@ class AttackPlan():
         for attack in self.__attack_list:
             q.put('Attempting attack: ' + attack.attack_name())
             threading.Thread(target=attack.execute_attack, args=(q, kwargs), daemon=True).start()
+            #self.controller.app.after(3000, self.update())
             while True:
                 try:
-                    l = q.get(True, timeout=9999)
+                    l = q.get(True, timeout=attack.TIMEOUT)
                     yield l
                     if type(l) == AttackResultInfo:
                         yield "Attack done, getting results..."
@@ -51,4 +53,23 @@ class AttackPlan():
                     break
         yield "Attack plan has finished!"
 
+"""    def execute_plan(self, **kwargs) -> list():
+        q = queue.Queue()
+        for attack in self.__attack_list:
+            q.put('Attempting attack: ' + attack.attack_name())
+            threading.Thread(target=attack.execute_attack, args=(q, kwargs), daemon=True).start()
+            self.controller.app.after(3000, self.update(q=q))
+        yield "Attack plan has finished!"
 
+    def update(self, q):
+        try:
+            l = q.get(True, timeout=9999)
+            yield l
+            if type(l) == AttackResultInfo:
+                yield "Attack done, getting results..."
+                return
+        except queue.Empty:
+                pass
+            
+        self.controller.app.after(3000, self.update(q=q))
+"""

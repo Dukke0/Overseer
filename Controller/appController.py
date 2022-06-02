@@ -21,7 +21,7 @@ class AppController:
         self.app = app
         self.interface = Interface()
         self.target = Target()
-        self.attack_plan = AttackPlan(target=self.target)
+        self.attack_plan = AttackPlan(target=self.target, controller=self)
         self.db = Database('database.db')
         self.report = Report(self.target, database=self.db)
         self.view = None
@@ -120,7 +120,7 @@ class AppController:
         self.target.essid = essid.strip()
         self.target.channel = channel
         protocol = protocol.strip()
-        print(protocol)
+
         if protocol == 'WPA' or protocol == 'WPA2' or protocol == 'WPA/WPA2' or protocol =='WPA2 WPA':
             self.target.protocol = WPA
         elif protocol == 'WEP':
@@ -130,7 +130,6 @@ class AppController:
 
     def protocol_attacks(self, protocol: AbstractProtocol) -> list():
         if protocol != None:
-            print(protocol, protocol.attacks_list())
             return protocol.attacks_list() # TODO manage none
 
     def get_plan(self):

@@ -1,4 +1,5 @@
 
+import sys
 import time
 from Model.Attacks.AbstractAttack import AbstractAttack
 import subprocess as sb
@@ -11,7 +12,7 @@ class EvilTwin(AbstractAttack):
 
     PROCESS_NAMES = [AIRBASE_MESSAGE, DNSCHEF_MESSAGE, LIGHTTPD_MESSAGE]
 
-    TIMEOUT = 0 #infinite
+    TIMEOUT = sys.maxsize #infinite
 
     @classmethod
     def attack_name(cls) -> str:
