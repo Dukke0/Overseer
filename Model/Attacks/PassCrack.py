@@ -25,9 +25,9 @@ class DictionaryAttack(AbstractAttack):
     def description(cls, result: bool) -> str:
         desc = ""
         if result:
-            desc += "The password has been cracked easily, it is usually a bad indication that this application" 
-            + "can get your network password. Change your password as it is very weak. Tips: Use password longer than"
-            + " 8 characters, use uncommon words, don't put keywords that can be easily deduced (Your company name,"
+            desc += "The password has been cracked easily, it is usually a bad indication that this application" \
+            + "can get your network password. Change your password as it is very weak. Tips: Use password longer than" \
+            + " 8 characters, use uncommon words, don't put keywords that can be easily deduced (Your company name," \
             + "your name, your age, etc...)\n"
         else:
             desc += "The application could not recover your password."

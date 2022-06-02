@@ -40,10 +40,10 @@ class ReportListView(AbstractView):
 
         self.get_reports()     
     
-    def read(self, event):
+    def read(self):
         pass
 
-    def delete(self, event):
+    def delete(self):
         pass
     
     def popup(self, event):
@@ -105,7 +105,6 @@ class ReportListView(AbstractView):
 
     def get_reports(self) -> None:
         reports = self.controller.get_reports()
-        print(reports)
         for n in reports:
             self.tv.insert('', tk.END, values=tuple(n))
             #for ix, val in enumerate(tuple(n)):

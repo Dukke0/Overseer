@@ -49,5 +49,6 @@ class AttackPlan():
                         break
                 except queue.Empty:
                     break
+        yield "Attack plan has finished!"
 
 

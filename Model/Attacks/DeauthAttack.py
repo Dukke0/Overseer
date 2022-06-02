@@ -13,8 +13,8 @@ class DeauthAttack(AbstractAttack):
     def description(cls, result: bool) -> str:
         desc = ""
         if result:
-            desc += "Vulnerability found: Network is vulnerable to deauthentication attacks.\n"
-            + "Even thought the network is vulnerable, deauthentication attacks are not a threat on their own.\n"
+            desc = "Vulnerability found: Network is vulnerable to deauthentication attacks.\n" \
+            + "Even thought the network is vulnerable, deauthentication attacks are not a threat on their own.\n" \
             + "However, they can enable other type of attacks like Evil twin or stealing your networks password hash.\n"
         else:
             desc += "Network is not vulnerable to deauthentication attacks."
@@ -29,7 +29,7 @@ class DeauthAttack(AbstractAttack):
             '-e', 'wlan.rsn.capabilities.mfpr'] 
 
         result = AttackResultInfo()
-        result.attack = cls.attack_name
+        result.attack = cls.attack_name()
 
         process = sb.Popen(cmd, stdout=sb.PIPE, universal_newlines=True)
         if process.stdout.read().find('1') == -1:

@@ -4,7 +4,7 @@ from Controller.appException import AppException
 from Model.AttackPlan import AttackPlan
 from Model.Attacks.AbstractAttack import AbstractAttack, AttackResultInfo
 from Model.Attacks.EvilTwin import EvilTwin
-from Model.Protocols import OPEN, WPA, AbstractProtocol
+from Model.Protocols import OPEN, WEP, WPA, AbstractProtocol
 from Model.Target import Target
 from Model.interface import Interface
 from View.AppView import AppView
@@ -92,6 +92,8 @@ class AppController:
                 else:
                     yield path
 
+            self.report.save_report()
+
         except StopIteration as si:
             #self.report.communicate_result(path)
             pass
@@ -113,19 +115,22 @@ class AppController:
             self.app.destroy()
 
     def change_target(self, bssid: str, essid: str, protocol: str, channel:  str) -> None:
-        #TODO *args?
+
         self.target.bssid = bssid.strip()
         self.target.essid = essid.strip()
         self.target.channel = channel
         protocol = protocol.strip()
-
-        if protocol == 'WPA' or protocol == 'WPA2' or protocol == 'WPA/WPA2' or protocol =='WPA WPA2':
+        print(protocol)
+        if protocol == 'WPA' or protocol == 'WPA2' or protocol == 'WPA/WPA2' or protocol =='WPA2 WPA':
             self.target.protocol = WPA
+        elif protocol == 'WEP':
+            self.target.protocol = WEP
         elif protocol == 'OPN':
             self.target.protocol = OPEN
 
     def protocol_attacks(self, protocol: AbstractProtocol) -> list():
         if protocol != None:
+            print(protocol, protocol.attacks_list())
             return protocol.attacks_list() # TODO manage none
 
     def get_plan(self):

@@ -24,7 +24,7 @@ class Report():
     def save_report(self):
         with self.db.conn:
             report = ('Report', datetime.datetime.now().strftime("%x"), self.target.bssid, self.target.essid,
-            self.target.protocol, self.target.channel)
+            str(self.target.protocol), self.target.channel)
 
             report_id = self.db.create_report(report)
             
@@ -114,7 +114,7 @@ class Report():
         with open(path, 'w') as file:
             json.dump(self.report_info(), file, indent=4)
 
-    def to_txt(self) -> None:
+    def to_txt(self, path=None) -> None:
         if not path:
             path = self.get_name_number("txt")
 

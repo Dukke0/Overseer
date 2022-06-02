@@ -14,7 +14,7 @@ class WPSBruteForceAttack(AbstractAttack):
         if result:
             desc += "PIN have been recovered, your password can also be recovered with the PIN found. "
         else:
-            desc += "PIN could not be recovered, AP has some kind of protection against brute force. However, "
+            desc += "PIN could not be recovered, AP has some kind of protection against brute force. However, " \
             + "PIN could still be recovered by reducing the amount of tries per minute, WPS should be disabled"
 
 

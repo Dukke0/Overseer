@@ -14,7 +14,7 @@ import tkinter.font as tkFont
 
 class ScanView(AbstractView):
 
-    def __init__(self, parent): 
+    def __init__(self, parent, controller=None): 
         super().__init__(parent)
         self.parent = parent
         parent.grid_rowconfigure(0, weight=1)
@@ -135,29 +135,10 @@ class ScanView(AbstractView):
         '''
         Creates a popup that shows a summary of the test plan
         '''
-        #TODO to class
-        self.summary_popup = Toplevel()
-        self.summary_popup.geometry("300x400")
-        
-        ttk.Label(self.summary_popup, text='Summary').grid(row=0, column=0)
-        
-        for idx, attack in enumerate(self.controller.get_plan()):
-            ttk.Label(self.summary_popup, text=attack.attack_name()).grid(row=idx+1, column=0)
-
-        attack_button = ttk.Button(self.summary_popup, text='Continue')
-        attack_button.bind('<Button-1>', self.summary_continue_btn)
-        attack_button.grid(row=len(self.controller.get_plan())+2, column=0)
-
-    
-    def summary_continue_btn(self, event) -> None:
-        '''
-        Event fired when the continue button from summary popup is clicked.
-        '''
-        self.summary_popup.destroy()
         if self.options_popup:
             self.options_popup.destroy()
         self.controller.change_view(AttackView)
-        #self.controller.attack_target()
+    
 
     def config_testing_clicked(self, event) -> None:
         '''
@@ -173,6 +154,7 @@ class ScanView(AbstractView):
 
 
     def scan_btn_clicked(self, event) -> None:
+        self.tv.delete(*self.tv.get_children())
         networks = self.controller.get_networks()
         # TODO manage error in controller
         for n in networks:

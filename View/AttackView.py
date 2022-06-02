@@ -10,7 +10,7 @@ from tkinter import END
 
 class AttackView(AbstractView):
 
-    def __init__(self, parent):
+    def __init__(self, parent, controller=None):
         super().__init__(parent)
 
         self.parent = parent
@@ -77,8 +77,12 @@ class AttackView(AbstractView):
                 if path[0] in self.extra_windows:
                     self.extra_windows[path[0]].put_data(path[1])
                     self.parent.update()
+                else:
+                    self.info_box.insert('end', path + "\n")
+                    self.info_box.see('end')
+                    self.parent.update()
             else:
-                self.info_box.insert('end', path)
+                self.info_box.insert('end', path + "\n")
                 self.info_box.see('end')
                 self.parent.update()
         

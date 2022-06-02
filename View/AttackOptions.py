@@ -27,8 +27,11 @@ class TestOptions(Toplevel):
         self.options.clear()
         for idx, a in enumerate(attack_list):
             self.create_option(a, idx)
-        self.accept_btn = ttk.Button(self, text='Accept', style="Accent.TButton", width=10)
+        self.accept_btn = ttk.Button(self, text='Accept', style="Accent.TButton", width=10, command=self.accept)
         self.accept_btn.grid(row=len(attack_list) + 2, column=0, pady=10)
+
+    def accept(self) -> None:
+        self.destroy()
 
     def create_option(self, option: AbstractAttack, idx: int):
         cb = ttk.Checkbutton(self, text='Option ' + option.attack_name(), command=partial(self.change, idx))

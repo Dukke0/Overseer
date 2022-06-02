@@ -22,6 +22,10 @@ class WEP(AbstractProtocol):
     def attacks_list(cls) -> list:
         return cls.__attacks_list
 
+    @classmethod
+    def __str__(cls) -> str:
+        return "WEP"
+
 class WPA(AbstractProtocol):
 
     __attacks_list = [DeauthAttack, DictionaryAttack, 
@@ -31,6 +35,10 @@ class WPA(AbstractProtocol):
     def attacks_list(cls) -> list:
         return cls.__attacks_list
 
+    @classmethod
+    def __str__(cls) -> str:
+        return "WPA"
+
 class OPEN(AbstractProtocol):
 
     __attacks_list = [EvilTwin]
@@ -38,4 +46,8 @@ class OPEN(AbstractProtocol):
     @classmethod
     def attacks_list(cls) -> list:
         return cls.__attacks_list
+
+    @classmethod
+    def __str__(cls) -> str:
+        return "OPN"
 

@@ -22,7 +22,7 @@ class Interface():
         Scans the signals around using Aircack tool.
         '''
         utl.temp_folder()
-
+        utl.delete_file(utl.wifi_file)
         cmd = ['sudo',
             'airodump-ng', self.monitor,
             '--wps',
