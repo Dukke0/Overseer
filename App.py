@@ -1,8 +1,7 @@
 
-import sqlite3
 import tkinter as tk
 from Controller.appController import AppController
-from Database import Database
+from Model.Database import Database
 from Model.Target import Target
 from View.AppView import AppView
 from View.AttackView import AttackView

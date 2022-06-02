@@ -43,7 +43,6 @@ class EvilTwin(AbstractAttack):
         dnschef_t.start()
         lighttpd_t.start()
 
-        data = []
         file_position = 0
 
         while True:

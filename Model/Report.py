@@ -7,7 +7,7 @@ from Model.Target import Target
 import json
 import datetime
 import os.path
-from Database import Database
+from Model.Database import Database
 import datetime
 
 class Report():

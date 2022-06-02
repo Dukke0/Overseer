@@ -13,7 +13,7 @@ from Model.Report import Report
 from View.View import AbstractView
 import Model.utils as utl
 import traceback
-from Database import Database
+from Model.Database import Database
 
 class AppController:
 
