@@ -8,6 +8,7 @@ from View.View import AbstractView
 import View.AppView
 import tkinter.font as tkFont
 from View.View import AbstractView
+from View.VisualizeReportView import VisualizeReport
 
 
 class ReportListView(AbstractView):
@@ -28,7 +29,7 @@ class ReportListView(AbstractView):
         #self.tv.bind('<<TreeviewSelect>>', self.net_list_selected)
 
         self.popup_menu = tk.Menu(self, tearoff=0)
-        self.popup_menu.add_command(label='View', command=self.read)
+        self.popup_menu.add_command(label='View', command=self.view_report)
         self.popup_menu.add_command(label='Export to json', command=self.export_json)
         self.popup_menu.add_command(label='Export to txt', command=self.export_txt)
         self.popup_menu.add_command(label='Delete', command=self.delete)
@@ -40,11 +41,21 @@ class ReportListView(AbstractView):
 
         self.get_reports()     
     
-    def read(self):
-        pass
+    def view_report(self):
+        if self.iid:
+            currItem = self.tv.focus()
+            val = self.tv.item(currItem)['values']
+            self.controller.get_report_info(id=val[0])
+            self.report_popup = VisualizeReport(self, report_info=self.controller.get_report_info(id=val[0]))
 
     def delete(self):
-        pass
+        if self.iid:
+            currItem = self.tv.focus()
+            val = self.tv.item(currItem)['values']
+            deleted_id = self.controller.delete_report(id=val[0])
+            if deleted_id != None:
+                selected_item = self.tv.selection()[0]
+                self.tv.delete(selected_item)
     
     def popup(self, event):
         self.iid = self.tv.identify_row(event.y)

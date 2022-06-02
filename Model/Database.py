@@ -106,3 +106,15 @@ class Database():
             if not filter:
                 c.execute("SELECT * FROM Report")
                 return c.fetchmany(90)
+    
+    def delete_report(self, id):
+        with self.conn:
+            sql = '''DELETE FROM Attack WHERE report_id==''' + str(id) + ";"
+            c = self.conn.cursor()
+            c.execute(sql)
+
+            sql = '''DELETE FROM Report WHERE id==''' + str(id) + ";"
+            c.execute(sql)
+            self.conn.commit()
+            return id
+

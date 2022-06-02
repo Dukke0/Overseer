@@ -1,6 +1,8 @@
 
 from enum import Enum
 from typing import Union
+
+from pyrsistent import b
 from Model.Attacks.AbstractAttack import AbstractAttack, AttackResultInfo
 from Model.Target import Target
 #from fpdf import FPDF
@@ -33,18 +35,19 @@ class Report():
                 self.db.create_attack(attack)
     
     def export_report(self, id, file_path=None, type='json'):
-        with self.db.conn:
-            c = self.db.conn.cursor()
+        if id != None:
+            with self.db.conn:
+                c = self.db.conn.cursor()
 
-            c.execute("SELECT * FROM REPORT WHERE id=="+str(id))
-            report = c.fetchall()[0]
-            date, bssid, essid, protocol, channel = report[2], report[3], report[4], report[5], report[6]
-            t = Target(bssid=bssid, essid=essid, protocol=protocol, channel=channel)
-            self.target = t
-            c.execute("SELECT * FROM Attack WHERE report_id=="+str(id))
-            for at in c: 
-                #TODO SUCCESS
-                self.write_attack_result(attack=at[1], messages=at[2], success=True)
+                c.execute("SELECT * FROM REPORT WHERE id=="+str(id))
+                report = c.fetchall()[0]
+                date, bssid, essid, protocol, channel = report[2], report[3], report[4], report[5], report[6]
+                t = Target(bssid=bssid, essid=essid, protocol=protocol, channel=channel)
+                self.target = t
+                c.execute("SELECT * FROM Attack WHERE report_id=="+str(id))
+                for at in c: 
+                    #TODO SUCCESS
+                    self.write_attack_result(attack=at[1], messages=at[2], success=True)
 
         if type == 'json':
             self.to_json(file_path)
@@ -70,7 +73,56 @@ class Report():
             success = True
         self.write_attack_result(attack=results.attack, success=success, messages=results.desc)
 
-    def report_info(self):
+    def get_name_number(self, ext="txt") -> str:
+        file_exists = os.path.exists(self.filename + "." + ext)
+        new_name = self.filename + "." + ext
+        i = 0
+        while file_exists:
+            i += 1
+            new_name = self.filename + "-" + str(i) + "." + ext
+            file_exists = os.path.exists(new_name + "." + ext)
+
+        return new_name
+
+    def to_json(self, path=None) -> None:
+        if not path:
+            path = self.get_name_number("json")
+
+        with open(path, 'w') as file:
+            json.dump(self.report_info(), file, indent=4)
+        
+    def to_txt(self, path=None) -> None:
+        if not path:
+            path = self.get_name_number("txt")
+
+        with open(path, "w") as f:
+            f.write(self.report_info(format='txt'))
+
+    def report_info(self, format='json'):
+        if format == 'json':
+            return self.__info_as_dict()
+        else:
+            return self.__info_as_txt()
+
+    def __info_as_txt(self):
+        s = "self.title" + "\n" + "Date: " + self.report_date() +"\n" \
+        + "\nAccess point properties: \n" \
+        + "\nMAC address: " + self.target.bssid \
+        + "\nEncryption protocol: " + str(self.target.protocol) \
+        + "\nChannel: " + str(self.target.channel) + "\n" \
+        + "\nTotal attacks performed on the target: " + str(len(self.attacks_results)) \
+        + "\nSuccesful Attacks: " + str(self.succesful_attacks) \
+        + "\nFailed Attacks: " + str(self.failed_attacks) \
+        + "\nVulnerability Percentage: " + str(round(self.succesful_attacks / len(self.attacks_results), 2) * 100) + "%\n" 
+
+        for attack in self.attacks_results:
+            s +='\nAttack type: ' + attack['attack'] \
+            + '\nInformation: ' + attack['info'] \
+            + '\nRisk: ' + str(attack['success'])+"\n"
+
+        return s
+
+    def __info_as_dict(self):
         dic = {
             'Title': "self.title", # TODO fix 
             'Date': self.report_date(), #TODO fix report date not taking from db,
@@ -93,48 +145,5 @@ class Report():
 
         for atk in self.attacks_results:
             dic['Attacks'][atk['attack']] = {'Information': atk['info'],
-                                             'Risk': atk['success']}
+                                            'Risk': atk['success']}
         return dic
-    
-    def get_name_number(self, ext="txt") -> str:
-        file_exists = os.path.exists(self.filename + "." + ext)
-        new_name = self.filename + "." + ext
-        i = 0
-        while file_exists:
-            i += 1
-            new_name = self.filename + "-" + str(i) + "." + ext
-            file_exists = os.path.exists(new_name + "." + ext)
-
-        return new_name
-
-    def to_json(self, path=None) -> None:
-        if not path:
-            path = self.get_name_number("json")
-
-        with open(path, 'w') as file:
-            json.dump(self.report_info(), file, indent=4)
-
-    def to_txt(self, path=None) -> None:
-        if not path:
-            path = self.get_name_number("txt")
-
-        with open(path, "w") as f:
-            f.write("self.title" + "\n" + "Date: " + self.report_date() +"\n")
-            
-            f.write("\nAccess point properties: \n" )
-            f.write("\nMAC address: " + self.target.bssid)
-            f.write("\nEncryption protocol: " + str(self.target.protocol))
-            f.write("\nChannel: " + str(self.target.channel) + "\n")
-
-            f.write("\nTotal attacks performed on the target: " + str(len(self.attacks_results)))
-            f.write("\nSuccesful Attacks: " + str(self.succesful_attacks))
-            f.write("\nFailed Attacks: " + str(self.failed_attacks))
-            f.write("\nVulnerability Percentage: " 
-                    + str(round(self.succesful_attacks / len(self.attacks_results), 2) * 100) + "%\n")
-
-
-            for attack in self.attacks_results:
-                f.write('\nAttack type: ' + attack['attack'])
-                f.write('\nInformation: ' + attack['info'])
-                f.write('\nRisk: ' + str(attack['success'])+"\n")
-            

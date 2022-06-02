@@ -198,5 +198,19 @@ class AppController:
             self.view.show_error(ex)
         except Exception as ex:
             self.app.destroy()
-            traceback.print_exc()            
+            traceback.print_exc()     
 
+    def delete_report(self, id):
+        try:
+            return self.db.delete_report(id)
+        except:
+            #An error in the database has occurred
+            return
+
+    def get_report_info(self, id=None):
+        try:
+            self.report.export_report(id=id, type=None)
+            return self.report.report_info(format='txt')
+        except Exception as ex:
+            self.app.destroy()
+            traceback.print_exc()  

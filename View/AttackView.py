@@ -8,6 +8,8 @@ from tkinter import ttk
 import tkinter as tk
 from tkinter import END
 
+from View.VisualizeReportView import VisualizeReport
+
 class AttackView(AbstractView):
 
     def __init__(self, parent, controller=None):
@@ -56,7 +58,7 @@ class AttackView(AbstractView):
 
 
     def open_report(self, event):
-        self.controller.check_report()
+        popup = VisualizeReport(self, self.controller.get_report_info(id=None))
 
     def test_attack(self, event):
         self.start_btn["state"] = "disabled"

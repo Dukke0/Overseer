@@ -70,7 +70,7 @@ class DictionaryAttack(AbstractAttack):
             elif line.find('KEY NOT FOUND') != -1:
                 q.put('KEY NOT FOUND')
                 result.risk = 'None'
-                result.desc = cls.description(True)
+                result.desc = cls.description(False)
                 q.put(result)
 
         p.kill()
