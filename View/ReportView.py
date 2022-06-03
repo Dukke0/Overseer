@@ -1,7 +1,7 @@
 
 from tkinter import NORMAL, DISABLED, Toplevel, ttk
 import tkinter as tk
-from tkinter.messagebox import showerror
+from tkinter.messagebox import WARNING, askokcancel, showerror, showinfo, showwarning
 from tkinter import filedialog
 
 from View.View import AbstractView
@@ -50,13 +50,15 @@ class ReportListView(AbstractView):
 
     def delete(self):
         if self.iid:
-            currItem = self.tv.focus()
-            val = self.tv.item(currItem)['values']
-            deleted_id = self.controller.delete_report(id=val[0])
-            if deleted_id != None:
-                selected_item = self.tv.selection()[0]
-                self.tv.delete(selected_item)
-    
+            if askokcancel(title='Confirmation', message='Deleting will delete all the data.', icon=WARNING):
+                currItem = self.tv.focus()
+                val = self.tv.item(currItem)['values']
+                deleted_id = self.controller.delete_report(id=val[0])
+                if deleted_id != None:
+                    selected_item = self.tv.selection()[0]
+                    self.tv.delete(selected_item)
+                    showinfo(title='Deletion Status', message='The report has been deleted successfully')
+
     def popup(self, event):
         self.iid = self.tv.identify_row(event.y)
         if self.iid:

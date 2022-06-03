@@ -1,5 +1,6 @@
 #from View.AppView import AppView
 import queue
+import threading
 from Controller.appException import AppException
 from Model.AttackPlan import AttackPlan
 from Model.Attacks.AbstractAttack import AbstractAttack, AttackResultInfo
@@ -78,28 +79,47 @@ class AppController:
         except Exception as e:
             print(e)
             self.clean_close()
-    
-    def attack_target(self) -> str:
+
+    def attack_notification(self, q: queue.Queue):
+        try:
+            for _ in range(0, 100):
+                l = q.get_nowait()
+                self.view.show_notify(path=l)
+                if type(l) == AttackResultInfo:
+                    self.view.show_notify(l="Attack done, getting results...")
+                    return
+        except queue.Empty:
+                pass
+            
+
+    def attack_target(self):
         try:
             #self.interface.sniff_target(self.target)
+            q = queue.Queue()
+            kwargs={'target':self.target,'interface':self.interface}
+
             if EvilTwin in self.get_plan():
                 for n in EvilTwin.PROCESS_NAMES:
                     self.view.create_extra_window(name=n)
 
-            for path in self.attack_plan.execute_plan(target=self.target, interface=self.interface):
+            threading.Thread(target=self.attack_plan.execute_plan, args=(q, kwargs), daemon=True).start()
+
+            """
+            for path in self.attack_plan.execute_plan(target=self.target, q=q, interface=self.interface):
                 if type(path) == AttackResultInfo:
                     self.report.report_results_from(path)
                 else:
                     yield path
 
             self.report.save_report()
+            """
 
         except StopIteration as si:
             #self.report.communicate_result(path)
+            print('hello')
             pass
         except Exception as e:
             print(e)
-            yield 'error'
             #self.clean_close()
             traceback.print_exc()
 

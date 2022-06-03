@@ -1,5 +1,6 @@
 import queue
 import threading
+import time
 from typing import Union
 from Model.Attacks.AbstractAttack import AbstractAttack, AttackResultInfo
 from Model.Attacks.EvilTwin import EvilTwin
@@ -36,6 +37,30 @@ class AttackPlan():
     def target(self, target: Target) -> None:
         self.__target = Target
     
+    def execute_plan(self, q, kwargs) -> list():
+        for attack in self.__attack_list:
+            #q.put('Attempting attack: ' + attack.attack_name())
+            threading.Thread(target=attack.execute_attack, args=(q, kwargs), daemon=True).start()
+            self.update(q=q)
+        #yield "Attack plan has finished!"
+
+    def update(self, q):
+        """
+        try:
+            l = q.get(True, timeout=9999)
+            yield l
+            if type(l) == AttackResultInfo:
+                yield "Attack done, getting results..."
+                return
+        except queue.Empty:
+                pass
+        """
+        while True:
+            time.sleep(2)
+            self.controller.attack_notification(q=q)
+            self.update(q=q)
+
+"""
     def execute_plan(self, **kwargs) -> list():
         q = queue.Queue()
         for attack in self.__attack_list:
@@ -52,24 +77,6 @@ class AttackPlan():
                 except queue.Empty:
                     break
         yield "Attack plan has finished!"
-
-"""    def execute_plan(self, **kwargs) -> list():
-        q = queue.Queue()
-        for attack in self.__attack_list:
-            q.put('Attempting attack: ' + attack.attack_name())
-            threading.Thread(target=attack.execute_attack, args=(q, kwargs), daemon=True).start()
-            self.controller.app.after(3000, self.update(q=q))
-        yield "Attack plan has finished!"
-
-    def update(self, q):
-        try:
-            l = q.get(True, timeout=9999)
-            yield l
-            if type(l) == AttackResultInfo:
-                yield "Attack done, getting results..."
-                return
-        except queue.Empty:
-                pass
-            
-        self.controller.app.after(3000, self.update(q=q))
 """
+    
+

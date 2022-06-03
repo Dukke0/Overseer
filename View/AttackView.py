@@ -60,34 +60,27 @@ class AttackView(AbstractView):
     def open_report(self, event):
         popup = VisualizeReport(self, self.controller.get_report_info(id=None))
 
-    def test_attack(self, event):
-        self.start_btn["state"] = "disabled"
-        self.check_report_btn["state"] = "disabled"
-        self.stop_btn["state"] = "normal"
-        #for n in range(3):
-        #    self.create_extra_window('window' + str(n))
-        #t0 = time.time()
-        """t1= time.time()
-            while t1 - t0 < 1:
-                t1 = time.time()
-            t0 = time.time()"""
-        #self.controller.attack_plan.attack_list = EvilTwin
-        
-        for path in self.controller.attack_target():
-            if len(self.extra_windows) != 0:
-                print(path[0], path[1])
-                if path[0] in self.extra_windows:
-                    self.extra_windows[path[0]].put_data(path[1])
-                    self.parent.update()
-                else:
-                    self.info_box.insert('end', path + "\n")
-                    self.info_box.see('end')
-                    self.parent.update()
+    def show_notify(self, path):
+        if len(self.extra_windows) != 0:
+            if path[0] in self.extra_windows:
+                self.extra_windows[path[0]].put_data(path[1])
+                self.parent.update()
             else:
                 self.info_box.insert('end', path + "\n")
                 self.info_box.see('end')
                 self.parent.update()
-        
+        else:
+            self.info_box.insert('end', path + "\n")
+            self.info_box.see('end')
+            self.parent.update()
+
+    def test_attack(self, event):
+        self.start_btn["state"] = "disabled"
+        self.check_report_btn["state"] = "disabled"
+        self.stop_btn["state"] = "normal"
+        print(self.controller)
+        print(self.controller.attack_target)
+        print(self.controller.attack_target())
 
     def create_extra_window(self, name):
         windows = len(self.extra_windows)

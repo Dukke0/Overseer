@@ -8,18 +8,10 @@ class AppView(AbstractView):
 
     def __init__(self, parent, controller=None): 
         super().__init__(parent, controller)
-
+        self.parent = parent
         self.label = ttk.Label(self, text='Welcome to Wifipy', font=(25))
         self.label.grid(row=0, column=0, pady=20)
-        """
-        self.combobox = ttk.Combobox(self)
-        self.combobox.bind('<Button-1>', self.interface_changed)
-        self.combobox.grid(row=1, column=0)
 
-        self.startButton = ttk.Button(self, text="Continue")
-        self.startButton.bind('<Button-1>', self.nextButton_clicked)
-        self.startButton.grid(row=3, column=0)
-        """
         self.startButton = ttk.Button(self, text="Start", style="Accent.TButton", width=50)
         self.startButton.bind('<Button-1>', self.interface_window)
         self.startButton.grid(row=1, column=0, pady=5)
@@ -29,7 +21,7 @@ class AppView(AbstractView):
         reports_button.bind('<Button-1>', self.report_button_clicked)
         reports_button.grid(row=2, column=0, pady=5)
         
-        quit_button = ttk.Button(self, text='Quit', width=50)
+        quit_button = ttk.Button(self, text='Quit', width=50, command=self.quit)
         quit_button.grid(row=3, column=0, pady=5)
 
         self.popup = None
@@ -70,3 +62,6 @@ class AppView(AbstractView):
 
     def show_error(self, ex):
         showerror(title='Error', message=str(ex))
+    
+    def quit(self):
+        self.parent.destroy()
