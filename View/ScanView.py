@@ -156,7 +156,10 @@ class ScanView(AbstractView):
     def scan_btn_clicked(self, event) -> None:
         self.tv.delete(*self.tv.get_children())
         networks = self.controller.get_networks()
-        # TODO manage error in controller
+
+        if not networks:
+             return
+
         for n in networks:
             parsed_net = ['-' if not i.strip() else i for i in n]
             self.tv.insert('', tk.END, values=tuple(parsed_net))

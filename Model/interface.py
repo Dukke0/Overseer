@@ -10,7 +10,7 @@ class Interface():
 
     def __init__(self):
         self.max_retries = 5
-        self.__scan_time = 5
+        self.__scan_time = 1
         self.intf = ""
         self.monitor = ""
     
@@ -33,7 +33,10 @@ class Interface():
         process.kill()
      
     def get_networks(self) -> list():
-        return utl.parse_networks_file(utl.wifi_file + '-01.csv')
+        try:
+            return utl.parse_networks_file(utl.wifi_file + '-01.csv')
+        except Exception:
+            raise AppException("Couldn't detect any networks")
 
     def set_interface(self, name: str) -> None:
         self.intf = name

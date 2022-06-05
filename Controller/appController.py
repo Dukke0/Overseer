@@ -63,7 +63,7 @@ class AppController:
             self.view.show_error(ex)
         except Exception as e:
             print(e)
-            self.clean_close
+            #self.clean_close()
     
     def selected_interface(self, name: str) -> None:
         '''
