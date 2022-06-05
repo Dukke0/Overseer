@@ -1,5 +1,6 @@
 
 from enum import Enum
+import threading
 from typing import Union
 
 from pyrsistent import b
@@ -27,7 +28,6 @@ class Report():
         with self.db.conn:
             report = ('Report', datetime.datetime.now().strftime("%x"), self.target.bssid, self.target.essid,
             str(self.target.protocol), self.target.channel)
-
             report_id = self.db.create_report(report)
             
             for r in self.attacks_results:
@@ -105,6 +105,7 @@ class Report():
             return self.__info_as_txt()
 
     def __info_as_txt(self):
+        print(self.attacks_results)
         s = "self.title" + "\n" + "Date: " + self.report_date() +"\n" \
         + "\nAccess point properties: \n" \
         + "\nMAC address: " + self.target.bssid \
@@ -123,6 +124,7 @@ class Report():
         return s
 
     def __info_as_dict(self):
+        print(self.attacks_results)
         dic = {
             'Title': "self.title", # TODO fix 
             'Date': self.report_date(), #TODO fix report date not taking from db,

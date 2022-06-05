@@ -84,10 +84,17 @@ class AppController:
         try:
             for _ in range(0, 100):
                 l = q.get_nowait()
-                self.view.show_notify(path=l)
-                if type(l) == AttackResultInfo:
-                    self.view.show_notify(l="Attack done, getting results...")
+
+                if l == AttackPlan.END_MESSAGE:
+                    self.report.save_report()
+
+                elif type(l) == AttackResultInfo:
+                    self.report.report_results_from(l)
+                    self.view.show_notify("Attack done, getting results...")
                     return
+
+                self.view.show_notify(path=l)
+
         except queue.Empty:
                 pass
             
@@ -101,23 +108,8 @@ class AppController:
             if EvilTwin in self.get_plan():
                 for n in EvilTwin.PROCESS_NAMES:
                     self.view.create_extra_window(name=n)
-
             threading.Thread(target=self.attack_plan.execute_plan, args=(q, kwargs), daemon=True).start()
 
-            """
-            for path in self.attack_plan.execute_plan(target=self.target, q=q, interface=self.interface):
-                if type(path) == AttackResultInfo:
-                    self.report.report_results_from(path)
-                else:
-                    yield path
-
-            self.report.save_report()
-            """
-
-        except StopIteration as si:
-            #self.report.communicate_result(path)
-            print('hello')
-            pass
         except Exception as e:
             print(e)
             #self.clean_close()
@@ -229,8 +221,7 @@ class AppController:
 
     def get_report_info(self, id=None):
         try:
-            self.report.export_report(id=id, type=None)
-            return self.report.report_info(format='txt')
+            return self.report.report_info(id=id, type='txt')
         except Exception as ex:
             self.app.destroy()
             traceback.print_exc()  

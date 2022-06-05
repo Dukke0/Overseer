@@ -19,7 +19,7 @@ class Database():
         """
         self.conn = None
         try:
-            self.conn = sqlite3.connect(db_file)
+            self.conn = sqlite3.connect(db_file, check_same_thread=False)
             return self.conn
         except sqlite3.Error as e:
             print(e)
