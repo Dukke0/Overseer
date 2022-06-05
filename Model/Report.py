@@ -33,10 +33,19 @@ class Report():
             for r in self.attacks_results:
                 attack = (r['attack'], r['info'], 'High', report_id)
                 self.db.create_attack(attack)
-    
+
+    def reset_data(self):
+        '''
+        Function that resets the report's data.
+        '''
+        self.succesful_attacks = 0
+        self.failed_attacks = 0
+        self.attacks_results = list()
+
     def export_report(self, id, file_path=None, type='json'):
         if id != None:
             with self.db.conn:
+                self.reset_data()
                 c = self.db.conn.cursor()
 
                 c.execute("SELECT * FROM REPORT WHERE id=="+str(id))

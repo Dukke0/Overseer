@@ -221,7 +221,8 @@ class AppController:
 
     def get_report_info(self, id=None):
         try:
-            return self.report.report_info(id=id, type='txt')
+            self.report.export_report(id=id, type=None)
+            return self.report.report_info(format='txt')
         except Exception as ex:
             self.app.destroy()
             traceback.print_exc()  

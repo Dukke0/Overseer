@@ -45,8 +45,8 @@ class ReportListView(AbstractView):
         if self.iid:
             currItem = self.tv.focus()
             val = self.tv.item(currItem)['values']
-            self.controller.get_report_info(id=val[0])
-            self.report_popup = VisualizeReport(self, report_info=self.controller.get_report_info(id=val[0]))
+            info = self.controller.get_report_info(id=val[0])
+            self.report_popup = VisualizeReport(self, report_info=info)
 
     def delete(self):
         if self.iid:
