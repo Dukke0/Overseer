@@ -15,6 +15,9 @@ from View.View import AbstractView
 import Model.utils as utl
 import traceback
 from Model.Database import Database
+from os import kill
+import signal
+
 
 class AppController:
 
@@ -50,14 +53,15 @@ class AppController:
         '''
         return self.interface.get_list_interfaces()
 
-    def get_networks(self) -> list:
+    def get_networks(self, scan=True) -> list:
         '''
         Scans and returns a list of networks
         :return: list of networks
         '''
 
         try:
-            self.interface.scan_networks()
+            if scan:
+                self.interface.scan_networks()
             return self.interface.get_networks()
         except AppException as ex:
             self.view.show_error(ex)
@@ -114,6 +118,16 @@ class AppController:
             print(e)
             #self.clean_close()
             traceback.print_exc()
+
+
+    def stop_attacks(self):
+        try:
+            with open(utl.pids_file, "r") as f:
+                lines = f.readlines()
+                for line in lines:
+                    kill(int(line), signal.SIGKILL)
+        except:
+            pass # Nothing to kill
 
     def get_scan_time(self) -> int:
         return self.interface.get_scan_time()

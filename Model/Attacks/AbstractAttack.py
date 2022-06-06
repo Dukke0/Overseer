@@ -3,6 +3,7 @@ from abc import ABC, abstractmethod
 
 class AbstractAttack(ABC):
     TIMEOUT = 40
+    HANDSHAKE_REQUIRED = False
     
     @classmethod
     @abstractmethod

@@ -49,7 +49,7 @@ class ScanView(AbstractView):
         # PROGRESS BAR
         self.scan_progress = ttk.Progressbar(self, orient=tk.HORIZONTAL,
                                             length=200, mode='indeterminate')
-                    
+
 
         self.options_popup = None
         self.tools_popup = None

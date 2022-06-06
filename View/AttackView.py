@@ -55,6 +55,7 @@ class AttackView(AbstractView):
         self.start_btn["state"] = "normal"
         self.check_report_btn["state"] = "normal"
         self.stop_btn["state"] = "disabled"
+        self.controller.stop_attacks()
 
 
     def open_report(self, event):

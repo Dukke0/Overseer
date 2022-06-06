@@ -3,8 +3,11 @@ from Model.Attacks.AbstractAttack import AbstractAttack, AttackResultInfo
 from Model.utils import target_dump
 import subprocess as sb
 import os.path
+import Model.utils as utl
 
 class BruteForceAttack(AbstractAttack):
+
+    HANDSHAKE_REQUIRED = True
 
     @classmethod
     def attack_name(cls) -> str:
@@ -54,6 +57,9 @@ class DictionaryAttack(AbstractAttack):
 
         p = sb.Popen(["stdbuf","-i0","-o0","-e0"] + cmd, stdout=sb.PIPE, text=True)
 
+        with open(utl.pids_file, "a") as f:
+            f.write(str(p.pid))
+
         for line in p.stdout:
             perc = line.find('%')
             key_found = line.find('KEY FOUND')
@@ -72,5 +78,3 @@ class DictionaryAttack(AbstractAttack):
                 result.risk = 'None'
                 result.desc = cls.description(False)
                 q.put(result)
-
-        p.kill()

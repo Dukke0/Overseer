@@ -1,6 +1,7 @@
 import sys
 from Model.Attacks.AbstractAttack import AbstractAttack, AttackResultInfo
 import subprocess as sb
+import Model.utils as utl
 
 class WPSBruteForceAttack(AbstractAttack):
     TIMEOUT = 50 #infinite
@@ -33,6 +34,9 @@ class WPSBruteForceAttack(AbstractAttack):
         result = AttackResultInfo(attack=cls.attack_name())
     
         p = sb.Popen(["stdbuf","-i0","-o0","-e0"]  + cmd, stdout=sb.PIPE, text = True)
+        
+        with open(utl.pids_file, "a") as f:
+            f.write(str(p.pid))
 
         lockout_reported = False
         for line in p.stdout:
@@ -92,7 +96,10 @@ class PixieDustAttack(AbstractAttack):
         result = AttackResultInfo(attack=cls.attack_name())
         
         p = sb.Popen(["stdbuf","-i0","-o0","-e0"]  + cmd, stdout=sb.PIPE, text = True)
-        
+
+        with open(utl.pids_file, "a") as f:
+            f.write(str(p.pid))
+
         lockout_reported = False
         for line in p.stdout:
 

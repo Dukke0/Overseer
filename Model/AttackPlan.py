@@ -13,6 +13,7 @@ class AttackPlan():
     def __init__(self, target=None, attack_list=list(), controller=None):
         self.__target = target
         self.__attack_list = attack_list
+        self.__threads_running = list()
         self.controller = controller
 
     @property
@@ -40,44 +41,24 @@ class AttackPlan():
         self.__target = Target
     
     def execute_plan(self, q, kwargs) -> list():
-        current_threads = list()
+        self.__threads_running = list()
         for attack in self.__attack_list:
             #q.put('Attempting attack: ' + attack.attack_name())
             t = threading.Thread(target=attack.execute_attack, args=(q, kwargs), daemon=True)
-            current_threads.append(t)
+            self.__threads_running.append(t)
             t.start()
-            self.update(q, threads=current_threads)
+            self.update(q, threads=self.__threads_running)
+        print('attackplan is out')
 
     def update(self, q, threads):
-        print('Im ', threading.get_ident())
         while True:
 
             if not threads:
+                print(threads)
                 q.put(self.END_MESSAGE)
-                print('its over')
                 break 
-            print(threads)
+
             threads = [t for t in threads if t.is_alive()]
             time.sleep(2)
             self.controller.attack_notification(q=q)
-
-"""
-    def execute_plan(self, **kwargs) -> list():
-        q = queue.Queue()
-        for attack in self.__attack_list:
-            q.put('Attempting attack: ' + attack.attack_name())
-            threading.Thread(target=attack.execute_attack, args=(q, kwargs), daemon=True).start()
-            #self.controller.app.after(3000, self.update())
-            while True:
-                try:
-                    l = q.get(True, timeout=attack.TIMEOUT)
-                    yield l
-                    if type(l) == AttackResultInfo:
-                        yield "Attack done, getting results..."
-                        break
-                except queue.Empty:
-                    break
-        yield "Attack plan has finished!"
-"""
     
-

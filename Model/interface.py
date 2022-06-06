@@ -10,7 +10,7 @@ class Interface():
 
     def __init__(self):
         self.max_retries = 5
-        self.__scan_time = 1
+        self.__scan_time = 10
         self.intf = ""
         self.monitor = ""
     

