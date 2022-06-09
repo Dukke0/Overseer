@@ -91,6 +91,7 @@ class AppController:
 
                 if l == AttackPlan.END_MESSAGE:
                     self.report.save_report()
+                    self.view.close_extra_windows()
 
                 elif type(l) == AttackResultInfo:
                     self.report.report_results_from(l)
@@ -108,10 +109,16 @@ class AppController:
             #self.interface.sniff_target(self.target)
             q = queue.Queue()
             kwargs={'target':self.target,'interface':self.interface}
-
-            if EvilTwin in self.get_plan():
+            plan = self.get_plan()
+            for a in plan:
+                if a.HANDHSHAKE_REQUIRED:
+                    self.view.notify('Handshake required')
+                    self.interface.sniff_target(self.target)
+                    break
+            if EvilTwin in plan:
                 for n in EvilTwin.PROCESS_NAMES:
                     self.view.create_extra_window(name=n)
+
             threading.Thread(target=self.attack_plan.execute_plan, args=(q, kwargs), daemon=True).start()
 
         except Exception as e:
@@ -197,7 +204,8 @@ class AppController:
                 self.view.show_error(ex)
                 return 
             #TODO return new mac address
-            utl.MACChanger.change_mac(mac=mac)
+            utl.MACChanger.change_mac(mac=mac, ifce_monitor=self.interface.monitor, 
+                                               ifce_name=self.interface.intf)
                     
         except AppException as ex:
             self.view.show_error(ex)

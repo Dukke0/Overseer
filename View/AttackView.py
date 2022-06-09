@@ -1,9 +1,7 @@
 import time
-from Model.Attacks.EvilTwin import EvilTwin
 from View.AttackWindow import AttackWindow
 import View.ScanView
 from View.View import AbstractView
-from Model.Attacks.DeauthAttack import DeauthAttack, TestAttack
 from tkinter import ttk
 import tkinter as tk
 from tkinter import END
@@ -79,9 +77,7 @@ class AttackView(AbstractView):
         self.start_btn["state"] = "disabled"
         self.check_report_btn["state"] = "disabled"
         self.stop_btn["state"] = "normal"
-        print(self.controller)
-        print(self.controller.attack_target)
-        print(self.controller.attack_target())
+
 
     def create_extra_window(self, name):
         windows = len(self.extra_windows)
@@ -90,6 +86,12 @@ class AttackView(AbstractView):
         x = self.winfo_x() + 200*(windows % mod)
         y = self.winfo_y() + 200*(windows+1%mod)
         self.extra_windows[name] = AttackWindow(self, name, pos=(x,y))
-
+    
+    def close_extra_windows(self):
+        if self.extra_windows:
+            for val in self.extra_windows.values():
+                val.destroy()
+            self.extra_windows = dict()
+                
     def show_error():
         pass

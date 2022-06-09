@@ -67,15 +67,26 @@ def delete_temp() -> Union[int, None]:
 class MACChanger():
 
     @classmethod
-    def change_mac(cls, mac=None):
-        cmd = ['sudo',
-               'macchanger']
+    def change_mac(cls, ifce_name, ifce_monitor, mac=None):
+        cmd = ['airmon-ng', 'stop', ifce_monitor]
+        sb.run(cmd, sb.PIPE)
+
+        cmd = ['ifconfig', ifce_name, 'down']
+        sb.run(cmd, sb.PIPE)
+
+        cmd = ['macchanger', ifce_name]
 
         if not mac: cmd.append('--random')
         else: cmd.append('--mac=' + mac)
 
         sb.run(cmd, sb.PIPE)
-    
+
+        cmd = ['ifconfig', ifce_name, 'up']
+        sb.run(cmd, sb.PIPE)
+
+        cmd = ['airmon-ng', 'start', ifce_name]
+        sb.run(cmd, sb.PIPE)
+
     @classmethod
     def validate_mac(cls, mac, separator=":"):
 
