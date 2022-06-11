@@ -70,9 +70,10 @@ class MACChanger():
     def change_mac(cls, ifce_name, ifce_monitor, mac=None):
         cmd = ['airmon-ng', 'stop', ifce_monitor]
         sb.run(cmd, sb.PIPE)
-
+        time.sleep(1)
         cmd = ['ifconfig', ifce_name, 'down']
         sb.run(cmd, sb.PIPE)
+        time.sleep(1)
 
         cmd = ['macchanger', ifce_name]
 
@@ -80,9 +81,11 @@ class MACChanger():
         else: cmd.append('--mac=' + mac)
 
         sb.run(cmd, sb.PIPE)
+        time.sleep(1)
 
         cmd = ['ifconfig', ifce_name, 'up']
         sb.run(cmd, sb.PIPE)
+        time.sleep(1)
 
         cmd = ['airmon-ng', 'start', ifce_name]
         sb.run(cmd, sb.PIPE)
