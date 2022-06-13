@@ -39,6 +39,9 @@ class Interface():
 
      
     def get_networks(self) -> list():
+        '''
+        Return networks from the scan file
+        '''
         try:
             return utl.parse_networks_file(utl.wifi_file + '-01.csv')
         except Exception:
@@ -48,10 +51,16 @@ class Interface():
         self.intf = name
 
     def clean_exit(self) -> None:
+        '''
+        Removes temp file and disables monitor
+        '''
         utl.delete_temp()
         sb.run(["airmon-ng stop %s" % self.monitor], shell=True)
 
     def init_monitor(self) -> None:
+        '''
+        Enables monitor mode
+        '''
 
         sb.run(["airmon-ng start %s" % self.intf], capture_output=True, shell=True)
         monitor_name = sb.run(["iwconfig | grep mon"], capture_output=True, text=True, shell=True)
@@ -60,6 +69,9 @@ class Interface():
             raise AppException("Could not enable monitor mode, use a card that allows it")
 
     def get_list_interfaces(self) -> list():
+        '''
+        Returns a list of all interfaces
+        '''
         list_ifs = sb.run([r"""ip -o link | grep ether | awk '{ print $2" : "$17 }'"""],
                         capture_output=True, text=True, shell=True)
         
@@ -69,6 +81,9 @@ class Interface():
         return list_ifs[:-1]
     
     def kill_all(self, name):
+        '''
+        Kills all processes with this name
+        '''
         try:
             sb.run(['killall', name], shell=False)
         except:
@@ -94,6 +109,9 @@ class Interface():
 
         
     def get_wps(self, data, target):
+        '''
+        Get wps data
+        '''
         data = data.decode("utf-8")
         start_idx = data.find(target.bssid)
         if start_idx == -1:
