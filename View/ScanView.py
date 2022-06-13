@@ -17,6 +17,8 @@ class ScanView(AbstractView):
     def __init__(self, parent, controller=None): 
         super().__init__(parent)
         self.parent = parent
+        self.controller = controller
+        
         parent.grid_rowconfigure(0, weight=1)
         parent.grid_columnconfigure(0, weight=1)
         parent.protocol("WM_DELETE_WINDOW", self.on_closing)
@@ -50,7 +52,7 @@ class ScanView(AbstractView):
         self.scan_progress = ttk.Progressbar(self, orient=tk.HORIZONTAL,
                                             length=200, mode='indeterminate')
 
-
+        self.process_networks(scan=False)
         self.options_popup = None
         self.tools_popup = None
         self.target_properties = None
@@ -119,7 +121,7 @@ class ScanView(AbstractView):
     def net_list_selected(self, event) -> None:
         currItem = self.tv.focus()
         self.target_properties = self.tv.item(currItem)['values']
-        #TODO self.target_properties a dict
+        #FIXME self.target_properties a dict
         self.controller.change_target(bssid=self.target_properties[1],
                                       essid=self.target_properties[0],
                                       protocol=self.target_properties[3],
@@ -152,10 +154,8 @@ class ScanView(AbstractView):
         attack_list = self.controller.protocol_attacks(target_info['protocol'])
         self.options_popup.show_options(attack_list=attack_list)
 
-
-    def scan_btn_clicked(self, event) -> None:
-        self.tv.delete(*self.tv.get_children())
-        networks = self.controller.get_networks()
+    def process_networks(self, scan):
+        networks = self.controller.get_networks(scan=scan)
 
         if not networks:
              return
@@ -168,6 +168,10 @@ class ScanView(AbstractView):
                 col_w = tkFont.Font().measure(val)
                 if self.tv.column(self.columns[ix],width=None)<col_w:
                     self.tv.column(self.columns[ix], width=col_w)
+
+    def scan_btn_clicked(self, event) -> None:
+        self.tv.delete(*self.tv.get_children())
+        self.process_networks(scan=True)
 
     def go_back(self, event):
         self.controller.change_view(View.AppView.AppView)

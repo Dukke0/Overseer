@@ -1,6 +1,10 @@
+import os
+from signal import SIGKILL
 import subprocess as sb
 from asyncio.subprocess import PIPE
 import time
+
+from sqlalchemy import false
 from Controller.appException import AppException
 from Model.Target import Target
 from Model.utils import target_dump
@@ -23,14 +27,16 @@ class Interface():
         '''
         utl.temp_folder()
         utl.delete_file(utl.wifi_file)
+        self.kill_all('airodump-ng')
         cmd = ['sudo',
             'airodump-ng', self.monitor,
-            '--wps',
             '--write', utl.wifi_file]
         
-        process = sb.Popen(cmd, stdout=PIPE)
+        process = sb.Popen(cmd, stdout=PIPE, shell=False)
         time.sleep(self.__scan_time)
-        process.kill()
+        process.terminate()
+        self.kill_all('airodump-ng')
+
      
     def get_networks(self) -> list():
         try:
@@ -43,12 +49,12 @@ class Interface():
 
     def clean_exit(self) -> None:
         utl.delete_temp()
-        #sb.run(["sudo airmon-ng stop %s" % self.monitor], shell=True)
+        #sb.run(["airmon-ng stop %s" % self.monitor], shell=True)
 
     def init_monitor(self) -> None:
         self.monitor = 'wlan0mon'
         """
-        sb.run(["sudo airmon-ng start %s" % self.intf], capture_output=True, shell=True)
+        sb.run(["airmon-ng start %s" % self.intf], capture_output=True, shell=True)
         monitor_name = sb.run(["iwconfig | grep mon"], capture_output=True, text=True, shell=True)
         self.monitor= monitor_name.stdout.split(" ")[0]
         if self.monitor == "":
@@ -64,26 +70,30 @@ class Interface():
         
         return list_ifs[:-1]
     
+    def kill_all(self, name):
+        try:
+            sb.run(['killall', name], shell=False)
+        except:
+            pass
+    
     def sniff_target(self, target_wifi):
         '''
         Sniff packets related to our target network
         '''
-        
+        utl.delete_file(utl.target_dump)
+        self.kill_all('airodump-ng')
         cmd = ['sudo',
             'airodump-ng',
             '-c', str(target_wifi.channel),
             '--bssid', target_wifi.bssid,
             '--write', target_dump,
-            '--wps',
             self.monitor]
-
-        process = sb.Popen(cmd, stdout=PIPE)
+        
+        process = sb.Popen(cmd, stdout=PIPE, shell=False)
         time.sleep(self.__scan_time)
         process.terminate()
-        
-        #out, err = process.communicate()
-        #target_wifi.wps = self.get_wps(out, target_wifi)
-    
+        self.kill_all('airodump-ng')
+
         
     def get_wps(self, data, target):
         data = data.decode("utf-8")
@@ -93,7 +103,7 @@ class Interface():
         end_idx = data.find("\n", start_idx)
         line = data[start_idx:end_idx]
         wps = " ".join(line.split()).split()[11] # 11 is where wps value is placed inside the lane
-        #TODO null at 11
+        #BUG null at 11
         print('WPS value: ' + wps)
         """
         if wps == "1.0" or wps == "2.0":

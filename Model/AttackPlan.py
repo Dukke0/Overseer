@@ -43,22 +43,23 @@ class AttackPlan():
     def execute_plan(self, q, kwargs) -> list():
         self.__threads_running = list()
         for attack in self.__attack_list:
-            #q.put('Attempting attack: ' + attack.attack_name())
+            q.put('Attempting attack: ' + attack.attack_name())
             t = threading.Thread(target=attack.execute_attack, args=(q, kwargs), daemon=True)
             self.__threads_running.append(t)
             t.start()
             self.update(q, threads=self.__threads_running)
-        print('attackplan is out')
+        q.put(self.END_MESSAGE)
+        self.controller.attack_notification(q=q)
 
     def update(self, q, threads):
         while True:
 
             if not threads:
-                print(threads)
-                q.put(self.END_MESSAGE)
                 break 
 
             threads = [t for t in threads if t.is_alive()]
             time.sleep(2)
             self.controller.attack_notification(q=q)
+
+
     

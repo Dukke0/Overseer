@@ -61,9 +61,6 @@ class WPSBruteForceAttack(AbstractAttack):
                 lockout_reported = line.find("WPS lockout reported") != -1
 
   
-
-        
-
 class PixieDustAttack(AbstractAttack):
     TIMEOUT = 50 #infinite
 

@@ -114,7 +114,6 @@ class Report():
             return self.__info_as_txt()
 
     def __info_as_txt(self):
-        print(self.attacks_results)
         s = "self.title" + "\n" + "Date: " + self.report_date() +"\n" \
         + "\nAccess point properties: \n" \
         + "\nMAC address: " + self.target.bssid \
@@ -133,7 +132,6 @@ class Report():
         return s
 
     def __info_as_dict(self):
-        print(self.attacks_results)
         dic = {
             'Title': "self.title", # TODO fix 
             'Date': self.report_date(), #TODO fix report date not taking from db,

@@ -14,9 +14,6 @@ class AttackView(AbstractView):
         super().__init__(parent)
 
         self.parent = parent
-        
-        self.label = ttk.Label(self, text="TARGET: ESSID: My personal net. MAC: f1:0b:01:00:ab:a0. CHANNEL: 6. PROTOCOL: WPA2")
-        self.label.grid(row=0, column=0, pady=(20, 0))
 
         box_r, box_c = 1, 0
         self.info_box = tk.Text(self, height=20, width=100)
@@ -77,6 +74,7 @@ class AttackView(AbstractView):
         self.start_btn["state"] = "disabled"
         self.check_report_btn["state"] = "disabled"
         self.stop_btn["state"] = "normal"
+        self.controller.attack_target()
 
 
     def create_extra_window(self, name):

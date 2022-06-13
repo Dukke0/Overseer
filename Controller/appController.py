@@ -1,6 +1,8 @@
 #from View.AppView import AppView
 import queue
 import threading
+
+from numpy import empty
 from Controller.appException import AppException
 from Model.AttackPlan import AttackPlan
 from Model.Attacks.AbstractAttack import AbstractAttack, AttackResultInfo
@@ -64,10 +66,11 @@ class AppController:
                 self.interface.scan_networks()
             return self.interface.get_networks()
         except AppException as ex:
-            self.view.show_error(ex)
+            if scan:
+                self.view.show_error(ex)
         except Exception as e:
             print(e)
-            #self.clean_close()
+            self.clean_close()
     
     def selected_interface(self, name: str) -> None:
         '''
@@ -89,14 +92,14 @@ class AppController:
             for _ in range(0, 100):
                 l = q.get_nowait()
 
-                if l == AttackPlan.END_MESSAGE:
-                    self.report.save_report()
-                    self.view.close_extra_windows()
-
-                elif type(l) == AttackResultInfo:
+                if type(l) == AttackResultInfo:
                     self.report.report_results_from(l)
                     self.view.show_notify("Attack done, getting results...")
                     return
+                
+                elif l == AttackPlan.END_MESSAGE:
+                    self.report.save_report()
+                    self.view.close_extra_windows()
 
                 self.view.show_notify(path=l)
 
@@ -106,13 +109,12 @@ class AppController:
 
     def attack_target(self):
         try:
-            #self.interface.sniff_target(self.target)
             q = queue.Queue()
             kwargs={'target':self.target,'interface':self.interface}
             plan = self.get_plan()
             for a in plan:
-                if a.HANDHSHAKE_REQUIRED:
-                    self.view.notify('Handshake required')
+                if a.HANDSHAKE_REQUIRED:
+                    self.view.show_notify('Handshake required, scanning ... Please wait...')
                     self.interface.sniff_target(self.target)
                     break
             if EvilTwin in plan:
@@ -123,7 +125,7 @@ class AppController:
 
         except Exception as e:
             print(e)
-            #self.clean_close()
+            self.clean_close()
             traceback.print_exc()
 
 
@@ -140,6 +142,7 @@ class AppController:
         return self.interface.get_scan_time()
 
     def clean_close(self) -> None:
+        self.stop_attacks()
         try:
             self.interface.clean_exit()
             self.app.destroy()
@@ -198,11 +201,11 @@ class AppController:
     
     def change_mac(self, mac=None):
         try:
-
-            mac = mac.replace("-", ":")
-            if not utl.MACChanger.validate_mac(mac):
-                self.view.show_error(ex)
-                return 
+            if mac:
+                mac = mac.replace("-", ":")
+                if not utl.MACChanger.validate_mac(mac):
+                    self.view.show_error(ex)
+                    return 
             #TODO return new mac address
             utl.MACChanger.change_mac(mac=mac, ifce_monitor=self.interface.monitor, 
                                                ifce_name=self.interface.intf)

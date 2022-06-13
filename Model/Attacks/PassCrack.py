@@ -19,6 +19,7 @@ class BruteForceAttack(AbstractAttack):
 
 class DictionaryAttack(AbstractAttack):
     __path_dict = 'Model/files/pass_dict' #TODO make default wordlist
+    HANDSHAKE_REQUIRED = True
 
     @classmethod
     def attack_name(cls) -> str:
@@ -45,8 +46,6 @@ class DictionaryAttack(AbstractAttack):
         if os.path.exists('Model/files/wordlist.txt'):
             wordlist = 'Model/files/wordlist.txt'
 
-        kwargs['target'].bssid = 'E8:DE:27:B0:14:C9' #TODO
-        target_dump = 'Model/files/handshake' #TODO
         cmd = ['aircrack-ng',
             '-w', wordlist, #TODO create/upload dictionary file
             '-b', kwargs['target'].bssid,
@@ -55,10 +54,18 @@ class DictionaryAttack(AbstractAttack):
         result = AttackResultInfo()
         result.attack = cls.attack_name()
 
-        p = sb.Popen(["stdbuf","-i0","-o0","-e0"] + cmd, stdout=sb.PIPE, text=True)
+        p = sb.Popen(["stdbuf","-i0","-o0","-e0"] + cmd, stdout=sb.PIPE, stderr=sb.PIPE, text=True)
 
         with open(utl.pids_file, "a") as f:
             f.write(str(p.pid))
+
+        for line in p.stderr:
+            q.put(line)
+            result.desc = "No EAPOL data found"
+            result.risk = "None"
+            q.put(result)
+            p.kill()
+
 
         for line in p.stdout:
             perc = line.find('%')

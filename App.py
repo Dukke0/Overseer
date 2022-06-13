@@ -1,13 +1,8 @@
 import tkinter as tk
 from Controller.appController import AppController
-from Model.Target import Target
 from View.AppView import AppView
-from View.AttackView import AttackView
-from View.ScanView import ScanView
-from Model.Report import Report
 import sv_ttk
-from Model.Attacks.DeauthAttack import DeauthAttack, TestAttack
-from threading import Thread
+
 
 class App(tk.Tk):
 

@@ -2,7 +2,7 @@
 from abc import ABC, abstractmethod
 from Model.Attacks.EvilTwin import EvilTwin
 from Model.Attacks.PassCrack import BruteForceAttack, DictionaryAttack
-from Model.Attacks.DeauthAttack import DeauthAttack
+from Model.Attacks.DeauthAttack import DeauthAttack, DeauthAttackPassive
 from Model.Attacks.WepAttack import WEPAllInAttack
 from Model.Attacks.WpsAttacks import PixieDustAttack, WPSBruteForceAttack
 
@@ -16,7 +16,7 @@ class AbstractProtocol(ABC):
         return cls.__attacks_list
 
 class WEP(AbstractProtocol):
-    __attacks_list = [WEPAllInAttack, EvilTwin]
+    __attacks_list = [DeauthAttack, DeauthAttackPassive, WEPAllInAttack, EvilTwin]
 
     @classmethod
     def attacks_list(cls) -> list:
@@ -28,7 +28,7 @@ class WEP(AbstractProtocol):
 
 class WPA(AbstractProtocol):
 
-    __attacks_list = [DeauthAttack, DictionaryAttack, 
+    __attacks_list = [DeauthAttack, DeauthAttackPassive, DictionaryAttack, 
                       WPSBruteForceAttack, PixieDustAttack, EvilTwin]
 
     @classmethod

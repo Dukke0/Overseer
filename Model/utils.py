@@ -18,7 +18,6 @@ pids_file = folder_name + "/pids"
 def parse_networks_file(filename: str) -> list():
     '''
     Returns a list of networks, parsed with pandas. 
-    TODO parse it without pandas
     '''
     df = pd.read_csv(filename)
     df.dropna(subset=[' ID-length'],inplace=True)
@@ -26,7 +25,7 @@ def parse_networks_file(filename: str) -> list():
     df = df[fields].copy()
     dic = df.to_dict()
 
-    #TODO is not efficient
+    #FIXME is not efficient
     detected_networks = list()
     for i in range(len(df)):
         network = list()
@@ -68,12 +67,15 @@ class MACChanger():
 
     @classmethod
     def change_mac(cls, ifce_name, ifce_monitor, mac=None):
+        ifce_name='wlan0'
+        print(ifce_name, ifce_monitor)
         cmd = ['airmon-ng', 'stop', ifce_monitor]
         sb.run(cmd, sb.PIPE)
-        time.sleep(1)
+        time.sleep(2)
+
         cmd = ['ifconfig', ifce_name, 'down']
         sb.run(cmd, sb.PIPE)
-        time.sleep(1)
+        time.sleep(2)
 
         cmd = ['macchanger', ifce_name]
 
@@ -81,11 +83,11 @@ class MACChanger():
         else: cmd.append('--mac=' + mac)
 
         sb.run(cmd, sb.PIPE)
-        time.sleep(1)
+        time.sleep(2)
 
         cmd = ['ifconfig', ifce_name, 'up']
         sb.run(cmd, sb.PIPE)
-        time.sleep(1)
+        time.sleep(2)
 
         cmd = ['airmon-ng', 'start', ifce_name]
         sb.run(cmd, sb.PIPE)
