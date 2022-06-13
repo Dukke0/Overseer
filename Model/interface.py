@@ -49,17 +49,15 @@ class Interface():
 
     def clean_exit(self) -> None:
         utl.delete_temp()
-        #sb.run(["airmon-ng stop %s" % self.monitor], shell=True)
+        sb.run(["airmon-ng stop %s" % self.monitor], shell=True)
 
     def init_monitor(self) -> None:
-        self.monitor = 'wlan0mon'
-        """
+
         sb.run(["airmon-ng start %s" % self.intf], capture_output=True, shell=True)
         monitor_name = sb.run(["iwconfig | grep mon"], capture_output=True, text=True, shell=True)
         self.monitor= monitor_name.stdout.split(" ")[0]
         if self.monitor == "":
             raise AppException("Could not enable monitor mode, use a card that allows it")
-        """
 
     def get_list_interfaces(self) -> list():
         list_ifs = sb.run([r"""ip -o link | grep ether | awk '{ print $2" : "$17 }'"""],
