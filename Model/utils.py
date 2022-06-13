@@ -13,8 +13,6 @@ folder_name = "temp"
 wifi_file = folder_name + "/scan"
 target_dump = folder_name + "/target_dump" 
 pids_file = folder_name + "/pids"
-a = 0
-
 
 def parse_networks_file(filename: str) -> list():
     '''
