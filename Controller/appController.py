@@ -134,7 +134,10 @@ class AppController:
             with open(utl.pids_file, "r") as f:
                 lines = f.readlines()
                 for line in lines:
-                    kill(int(line), signal.SIGKILL)
+                    try:
+                        kill(int(line), signal.SIGKILL)
+                    except:
+                        pass
         except:
             pass # Nothing to kill
 

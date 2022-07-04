@@ -23,15 +23,16 @@ class EvilTwin(AbstractAttack):
         return 'Evil twin captive portal'
 
     @classmethod
-    def description(cls, result: bool):
-        with open(cls.PASSWORDS_FILE, "r") as f:
-            pass_found = f.read()
+    def description(cls, result: bool, passwords: list):
+        capturedpass = ""
+        for i in passwords: 
+            capturedpass += i + '\n'
 
         desc = ""
         if result:
-            desc = "Evil twin has captured these paswords: " + pass_found
+            desc = "Evil twin has captured these paswords: " + capturedpass
         else:
-            desc += "Evil twin has captured these paswords: " + pass_found
+            desc += "Evil twin has captured these paswords: " + capturedpass
         return desc
 
     @classmethod
@@ -61,6 +62,8 @@ class EvilTwin(AbstractAttack):
         lighttpd_t.start()
 
         file_position = 0
+        last_line = ""
+        passwords = list()
         try:
             while True:
                 time.sleep(2)
@@ -69,15 +72,17 @@ class EvilTwin(AbstractAttack):
                     for line in f:
                         if line == 'EOF\n':
                             raise Exception('EOF')
-                        q.put('Password attempt captured!\n')
-                        q.put(line)
+                        elif last_line != line:
+                            passwords.append(line)
+                            last_line = line
+                            q.put('Password attempt captured!\n')
+                            q.put(line)
 
-                    file_position = f.tell()  # store position at which to resume
         except:
             result = AttackResultInfo()
             result.attack = cls.attack_name()
             result.risk = 'Medium'
-            result.desc = cls.description(True)
+            result.desc = cls.description(True, passwords=passwords)
             q.put(result)                    
 
 

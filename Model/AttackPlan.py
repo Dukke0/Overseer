@@ -25,10 +25,16 @@ class AttackPlan():
         self.__attack_list = [values]
 
     def add_attack(self, attack: AbstractAttack) -> None:
+        '''
+        Adds an attack to the list
+        '''
         if attack not in self.__attack_list:
             self.__attack_list.append(attack)
     
     def remove_attack(self, attack: AbstractAttack) -> None:
+        '''
+        Removes an attack form the list
+        '''
         if attack in self.__attack_list:
             self.__attack_list.remove(attack)
 
@@ -41,6 +47,10 @@ class AttackPlan():
         self.__target = Target
     
     def execute_plan(self, q, kwargs) -> list():
+        '''
+        Creates one thread for every attack, starts it and every 2 seconds notifies the controller to check
+        the queue
+        '''
         self.__threads_running = list()
         for attack in self.__attack_list:
             q.put('Attempting attack: ' + attack.attack_name())
@@ -52,6 +62,9 @@ class AttackPlan():
         self.controller.attack_notification(q=q)
 
     def update(self, q, threads):
+        '''
+        Notify the controller to check the queue
+        '''
         while True:
 
             if not threads:

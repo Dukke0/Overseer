@@ -57,7 +57,7 @@ class DictionaryAttack(AbstractAttack):
         p = sb.Popen(["stdbuf","-i0","-o0","-e0"] + cmd, stdout=sb.PIPE, stderr=sb.PIPE, text=True)
 
         with open(utl.pids_file, "a") as f:
-            f.write(str(p.pid))
+            f.write(str(p.pid) + '\n')
 
         for line in p.stderr:
             q.put(line)

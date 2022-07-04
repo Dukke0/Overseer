@@ -14,7 +14,7 @@ class Interface():
 
     def __init__(self):
         self.max_retries = 5
-        self.__scan_time = 20
+        self.__scan_time = 30
         self.intf = ""
         self.monitor = ""
     
@@ -33,12 +33,15 @@ class Interface():
             '--write', utl.wifi_file]
         
         process = sb.Popen(cmd, stdout=PIPE, shell=False)
-        time.sleep(self.__scan_time)
+        time.sleep(8)#self.__scan_time)
         process.terminate()
         self.kill_all('airodump-ng')
 
      
     def get_networks(self) -> list():
+        '''
+        Returns networks parsed
+        '''
         try:
             return utl.parse_networks_file(utl.wifi_file + '-01.csv')
         except Exception:
@@ -49,17 +52,14 @@ class Interface():
 
     def clean_exit(self) -> None:
         utl.delete_temp()
-        #sb.run(["airmon-ng stop %s" % self.monitor], shell=True)
+        sb.run(["airmon-ng stop %s" % self.monitor], shell=True)
 
     def init_monitor(self) -> None:
-        self.monitor = 'wlan0mon'
-        """
         sb.run(["airmon-ng start %s" % self.intf], capture_output=True, shell=True)
         monitor_name = sb.run(["iwconfig | grep mon"], capture_output=True, text=True, shell=True)
         self.monitor= monitor_name.stdout.split(" ")[0]
         if self.monitor == "":
             raise AppException("Could not enable monitor mode, use a card that allows it")
-        """
 
     def get_list_interfaces(self) -> list():
         list_ifs = sb.run([r"""ip -o link | grep ether | awk '{ print $2" : "$17 }'"""],
