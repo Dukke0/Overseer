@@ -7,6 +7,8 @@ Overseer is a wifi auditing tool that is designed to help small businesses perfo
 
 ## Requirements
 
+Only availabe in linux.
+
 | Tool        | Version   |  100% required  |
 | -------     | ---       | ---             |
 | Python      | >=3.7     | Yes             |
@@ -25,10 +27,16 @@ Clone this repository
 ```
 git clone https://github.com/Dukke0/Overseer
 ```
-Install all previous requirements as well as the following python modules
+Install all previous requirements as well as the following python modules:
 
 - pandas: ```pip install pandas```
 - sv_ttk: ```pip install sv-ttk``` Source: https://github.com/rdbende/Sun-Valley-ttk-theme
+
+To run the application, you must run App.py with python and elevated privileges:
+
+```
+sudo -E python App.py
+```
 
 ## Features
 
