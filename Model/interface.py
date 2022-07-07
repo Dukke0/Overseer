@@ -14,7 +14,7 @@ class Interface():
 
     def __init__(self):
         self.max_retries = 5
-        self.__scan_time = 30
+        self.__scan_time = 20
         self.intf = ""
         self.monitor = ""
     
@@ -33,7 +33,7 @@ class Interface():
             '--write', utl.wifi_file]
         
         process = sb.Popen(cmd, stdout=PIPE, shell=False)
-        time.sleep(8)#self.__scan_time)
+        time.sleep(self.__scan_time)
         process.terminate()
         self.kill_all('airodump-ng')
 
