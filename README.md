@@ -34,6 +34,7 @@ Overseer is a wifi auditing tool that is designed to help small businesses perfo
 
 - Dictionary generator: Generate a dictionary for the dictionary password attack with keywords.
 - MAC Changer: Change your mac address randomly or specify one to avoid white/black lists.
+- Network scan.
 
 ## :warning:	Disclaimer :warning:	
 
