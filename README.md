@@ -18,7 +18,17 @@ Overseer is a wifi auditing tool that is designed to help small businesses perfo
 | john (jumbo)| >=1.9.0   | No              |
 | macchanger  | >=1.7.0   | No              |
 
+## Installation
 
+Clone this repository
+
+```
+git clone https://github.com/Dukke0/Overseer
+```
+Install all previous requirements as well as the following python modules
+
+- pandas: ```pip install pandas```
+- sv_ttk: ```pip install sv-ttk``` Source: https://github.com/rdbende/Sun-Valley-ttk-theme
 
 ## Features
 
