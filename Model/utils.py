@@ -14,7 +14,6 @@ wifi_file = folder_name + "/scan"
 target_dump = folder_name + "/target_dump" 
 pids_file = folder_name + "/pids"
 
-
 def parse_networks_file(filename: str) -> list():
     '''
     Returns a list of networks, parsed with pandas. 
