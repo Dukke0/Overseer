@@ -1,9 +1,18 @@
 # Overseer - The easy wifi auditor
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/55766197/177827198-6da8a6ec-4798-498e-a60b-67dfe7b9de77.png" width=35% height=35%>
+  <img src="https://user-images.githubusercontent.com/55766197/177980810-387fdf2e-2d99-42e5-a792-cb786fd32ebe.png" width=35% height=35%>
 </p>
 
+
 Overseer is a wifi auditing tool that is designed to help small businesses perform a security check of their wireless network. With a graphical interface, automated attacks and automatic report generation, this tool aims to reduce the complexity and knowledge required to perform a wifi audit so that anyone outside the world of cybersecurity can check the security state of their wireless network.
+
+## Interface
+
+Overseer is written in Python and implements a GUI with tkinter. A theme is used to make the GUI look pretty. 
+
+<p align="center">
+  <img src="https://user-images.githubusercontent.com/55766197/177985828-a7177a57-5b25-4421-ae43-1516fef8bbb4.PNG">
+</p>
 
 ## Requirements
 
